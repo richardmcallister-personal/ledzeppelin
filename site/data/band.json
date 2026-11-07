@@ -1,17 +1,59 @@
 {
  "intro": "Four musicians from England, together from 1968 until John Bonham's death in 1980. Each chose a symbol for the sleeve of the fourth album, which carried no title and no band name.",
  "members": [
-  {"id": "jimmy-page", "name": "Jimmy Page", "role": "Guitars, producer", "born": "1944-01-09", "place": "Heston, Middlesex", "sym": "page", "img": "plant-page-acoustic",
-   "note": "A busy London session guitarist before joining the Yardbirds in 1966. He formed Led Zeppelin from the end of that band and produced every one of its albums."},
-  {"id": "robert-plant", "name": "Robert Plant", "role": "Vocals, harmonica", "born": "1948-08-20", "place": "West Bromwich, Staffordshire", "sym": "plant", "img": "plant-live",
-   "note": "Sang with Midlands groups including the Band of Joy before Page recruited him in 1968. Wrote most of the band's lyrics."},
-  {"id": "john-paul-jones", "name": "John Paul Jones", "role": "Bass, keyboards, mandolin, arranger", "born": "1946-01-03", "place": "Sidcup, Kent", "sym": "jones", "img": "jones-bass",
-   "note": "A session player and arranger who had worked with Page in the studio. On stage he moved between bass, organ, piano and mandolin."},
-  {"id": "john-bonham", "name": "John Bonham", "role": "Drums", "born": "1948-05-31", "died": "1980-09-25", "place": "Redditch, Worcestershire", "sym": "bonham", "img": "bonham-drums",
-   "note": "Played with Plant in the Band of Joy. His death in September 1980 ended the band; the other three said they could not go on as they were."}
+  {
+   "id": "jimmy-page",
+   "name": "Jimmy Page",
+   "role": "Guitars, producer",
+   "born": "1944-01-09",
+   "place": "Heston, Middlesex",
+   "sym": "page",
+   "img": "plant-page-acoustic",
+   "note": "A busy London session guitarist before joining the Yardbirds in 1966. He formed Led Zeppelin from the end of that band and produced every one of its albums.",
+   "pos": "85% 50%"
+  },
+  {
+   "id": "robert-plant",
+   "name": "Robert Plant",
+   "role": "Vocals, harmonica",
+   "born": "1948-08-20",
+   "place": "West Bromwich, Staffordshire",
+   "sym": "plant",
+   "img": "plant-live",
+   "note": "Sang with Midlands groups including the Band of Joy before Page recruited him in 1968. Wrote most of the band's lyrics."
+  },
+  {
+   "id": "john-paul-jones",
+   "name": "John Paul Jones",
+   "role": "Bass, keyboards, mandolin, arranger",
+   "born": "1946-01-03",
+   "place": "Sidcup, Kent",
+   "sym": "jones",
+   "img": "jones-bass",
+   "note": "A session player and arranger who had worked with Page in the studio. On stage he moved between bass, organ, piano and mandolin."
+  },
+  {
+   "id": "john-bonham",
+   "name": "John Bonham",
+   "role": "Drums",
+   "born": "1948-05-31",
+   "died": "1980-09-25",
+   "place": "Redditch, Worcestershire",
+   "sym": "bonham",
+   "img": "bonham-drums",
+   "note": "Played with Plant in the Band of Joy. His death in September 1980 ended the band; the other three said they could not go on as they were."
+  }
  ],
  "also": [
-  {"name": "Peter Grant", "role": "Manager", "note": "Managed the band from 1968 to 1980."},
-  {"name": "Jason Bonham", "role": "Drums at the reunions", "note": "John Bonham's son played drums at the 1988 Atlantic Records show and at the O2 Arena in 2007."}
+  {
+   "name": "Peter Grant",
+   "role": "Manager",
+   "note": "Managed the band from 1968 to 1980."
+  },
+  {
+   "name": "Jason Bonham",
+   "role": "Drums at the reunions",
+   "note": "John Bonham's son played drums at the 1988 Atlantic Records show and at the O2 Arena in 2007."
+  }
  ]
 }

@@ -30,7 +30,7 @@ D.shell("band");
   document.getElementById("lede").textContent = b.intro;
   const life = (m) => m.died ? `${D.date(m.born)} – ${D.date(m.died)}` : `Born ${D.date(m.born)}`;
   document.getElementById("members").innerHTML = b.members.map((m) => `<article class="member" id="${m.id}">
-      <img src="/img/${m.img}-s.webp" alt="${D.esc(m.name)}" width="480" height="480" loading="lazy">
+      <img src="/img/${m.img}-s.webp" alt="${D.esc(m.name)}" width="480" height="480" loading="lazy"${m.pos ? ` style="object-position:${m.pos}"` : ""}>
       <div class="txt"><i class="sym ${m.sym}" role="img" aria-label="${D.esc(m.name)}'s symbol"></i>
         <h2>${D.esc(m.name)}</h2><div class="muted small">${D.esc(m.role)}</div>
         <p class="small muted" style="margin:6px 0 10px">${life(m)} · ${D.esc(m.place)}</p>
