@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>The band · Led Zeppelin</title>
+<meta name="description" content="Jimmy Page, Robert Plant, John Paul Jones and John Bonham, and their four symbols.">
+<meta property="og:title" content="The band · Led Zeppelin">
+<meta property="og:description" content="Jimmy Page, Robert Plant, John Paul Jones and John Bonham, and their four symbols.">
+<meta property="og:image" content="/assets/social-preview.png">
+<link rel="preload" href="/fonts/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/d.css">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#202322">
+<script>try{var t=localStorage.getItem("lz_theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<script src="/d.js"></script>
+</head>
+<body>
+<main id="main" class="wrap">
+  <div class="head"><h1>The band</h1><p id="lede"></p></div>
+  <div class="members" id="members"><div class="loading">Loading…</div></div>
+  <section class="sheet" style="margin-top:16px"><h2>Also part of the story</h2><ul class="rows" id="also"></ul></section>
+</main>
+<script>
+D.shell("band");
+(async () => {
+  const [b, songs, idx] = await Promise.all([D.get("/data/band.json"), D.get("/data/songs.json"), D.get("/data/index.json")]);
+  document.getElementById("lede").textContent = b.intro;
+  const life = (m) => m.died ? `${D.date(m.born)} – ${D.date(m.died)}` : `Born ${D.date(m.born)}`;
+  document.getElementById("members").innerHTML = b.members.map((m) => `<article class="member" id="${m.id}">
+      <img src="/img/${m.img}-s.webp" alt="${D.esc(m.name)}" width="480" height="480" loading="lazy">
+      <div class="txt"><i class="sym ${m.sym}" role="img" aria-label="${D.esc(m.name)}'s symbol"></i>
+        <h2>${D.esc(m.name)}</h2><div class="muted small">${D.esc(m.role)}</div>
+        <p class="small muted" style="margin:6px 0 10px">${life(m)} · ${D.esc(m.place)}</p>
+        <p style="margin:0">${D.esc(m.note)}</p></div></article>`).join("");
+  document.getElementById("also").innerHTML = b.also.map((o) => `<li><div class="r"><b>${D.esc(o.name)}</b><span class="muted small">${D.esc(o.role)} · ${D.esc(o.note)}</span></div></li>`).join("");
+  if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView();
+})();
+</script>
+</body>
+</html>

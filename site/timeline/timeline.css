@@ -1,0 +1,19 @@
+#chronology{margin:18px 0 32px}
+#decades{display:flex;flex-wrap:wrap;gap:5px;padding:8px;background:var(--paper);border-radius:12px;margin-bottom:16px}
+#decades button,.rail-date button,.rail-shows{border:0;cursor:pointer;font:inherit}
+#decades button{padding:8px 12px;border-radius:8px;background:transparent;color:var(--ink);font-weight:650}
+#decades button[aria-pressed=true]{background:var(--red);color:var(--on-red)}
+#rail{background:var(--paper);border-radius:var(--radius);padding:16px clamp(12px,3vw,32px)}
+.rail-year{display:grid;grid-template-columns:90px 1fr;gap:22px}
+.rail-date{border-right:2px solid var(--bar);position:relative;padding:8px 12px 12px 0}
+.rail-date::after{content:"";position:absolute;right:-6px;top:20px;width:10px;height:10px;border-radius:50%;background:var(--red-ink)}
+.rail-date button{background:transparent;color:var(--ink);padding:0;font:400 26px/1.2 var(--brand)}
+.rail-entries{padding:5px 0 15px;display:grid;gap:6px;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));align-items:start}
+.rail-card{display:flex;align-items:center;gap:10px;min-height:62px;padding:8px 12px;background:var(--tint);border-radius:9px;text-decoration:none;color:var(--ink)}
+.rail-card:hover strong,.rail-date button:hover,.rail-shows:hover{text-decoration:underline}
+.rail-card img{object-fit:cover;border-radius:4px;flex:none}
+.rail-card small,.rail-card strong{display:block}
+.rail-card small{color:var(--muted);font-size:12px}
+.rail-shows{justify-self:start;align-self:center;background:transparent;color:var(--red-ink);font-weight:650;padding:8px 0;min-height:38px}
+#archive-heading{scroll-margin-top:175px}
+@media(max-width:640px){.rail-year{grid-template-columns:61px 1fr;gap:14px}.rail-date button{font-size:23px}.rail-entries{grid-template-columns:1fr}#decades button{padding:7px 10px}.rail-card{padding:8px}.rail-card img{width:44px;height:44px}#archive-heading{scroll-margin-top:190px}}

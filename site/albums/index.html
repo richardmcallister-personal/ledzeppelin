@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Albums · Led Zeppelin</title>
+<meta name="description" content="Led Zeppelin's nine studio albums, live records, films and compilation, with track lists and live play counts.">
+<meta property="og:title" content="Albums · Led Zeppelin">
+<meta property="og:description" content="Led Zeppelin's nine studio albums, live records, films and compilation, with track lists and live play counts.">
+<meta property="og:image" content="/assets/social-preview.png">
+<link rel="preload" href="/fonts/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/d.css">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#202322">
+<script>try{var t=localStorage.getItem("lz_theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<script src="/d.js"></script>
+</head>
+<body>
+<main id="main" class="wrap">
+  <div class="head">
+    <h1>The cover wall</h1>
+    <p>The nine studio albums, the live records and films, and the compilation. Tap a cover for the track list, how often each song was played live, and later editions.</p>
+  </div>
+  <div class="tools">
+    <div class="chips" id="cats" role="group" aria-label="Filter by type"></div>
+    <span class="sp"></span>
+    <div class="chips" role="group" aria-label="Order">
+      <button class="chip" type="button" data-o="asc" aria-pressed="true">Oldest first</button>
+      <button class="chip" type="button" data-o="desc" aria-pressed="false">Newest first</button>
+    </div>
+  </div>
+  <div class="wall" id="wall"><div class="loading">Loading…</div></div>
+</main>
+<dialog id="dlg" aria-labelledby="dlgT"></dialog>
+<script>
+D.shell("albums");
+(async () => {
+  const [albums, songs] = await Promise.all([D.albums(), D.get("/data/songs.json")]);
+  const live = Object.fromEntries(songs.map((s) => [s.s, s]));
+  let cat = D.qs("c") || "all";
+  let order = "asc";
+  const count = (c) => (c === "all" ? albums.length : albums.filter((a) => a.c.includes(c)).length);
+  const cats = [["all", "All"], ["studio", "Studio"], ["live", "Live"], ["film", "Films"], ["comp", "Compilations"]];
+  const C = document.getElementById("cats");
+  C.innerHTML = cats.map(([k, l]) => `<button class="chip" type="button" data-c="${k}" aria-pressed="${k === cat}">${l}<span class="n">${count(k)}</span></button>`).join("");
+  C.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-c]"); if (!b) return;
+    cat = b.dataset.c;
+    C.querySelectorAll("[data-c]").forEach((x) => x.setAttribute("aria-pressed", x === b));
+    history.replaceState(null, "", cat === "all" ? location.pathname : "?c=" + cat);
+    draw();
+  });
+  document.querySelectorAll("[data-o]").forEach((b) => b.addEventListener("click", () => {
+    order = b.dataset.o;
+    document.querySelectorAll("[data-o]").forEach((x) => x.setAttribute("aria-pressed", x === b));
+    draw();
+  }));
+
+  const W = document.getElementById("wall");
+  function draw() {
+    let list = albums.filter((a) => cat === "all" || a.c.includes(cat));
+    list = list.slice().sort((a, b) => (order === "asc" ? a.d.localeCompare(b.d) : b.d.localeCompare(a.d)));
+    let h = "", dec = null;
+    for (const a of list) {
+      const d = Math.floor(a.y / 10) * 10;
+      if (d !== dec) { dec = d; h += `<div class="yr">${d}s</div>`; }
+      h += `<button class="cv" type="button" data-s="${a.s}"><div class="art">${D.cover(a, 160)}</div><b>${D.esc(a.t)}</b><span>${a.y} · ${a.c.map((c) => D.CAT[c]).join(", ")}</span></button>`;
+    }
+    W.innerHTML = h || `<p class="empty">Nothing here.</p>`;
+  }
+  draw();
+
+  const dlg = document.getElementById("dlg");
+  function open(slug) {
+    const a = albums.find((x) => x.s === slug); if (!a) return;
+    const tracks = a.tr.length ? `<h3>Track list</h3><ol class="tracks">${a.tr.map((t) => {
+      const l = live[t.s];
+      return `<li><a href="/song/?s=${t.s}">${D.esc(t.n)}</a><span class="end">${l ? l.k + " live" : "not played live"}</span></li>`;
+    }).join("")}</ol>` : "";
+    const eds = a.ed.length ? `<h3>Also released as</h3><div class="eds">${a.ed.map((e) => `<figure><img src="/covers/${e.s}.webp" alt="${D.esc(a.t + " " + e.t)} cover" width="96" height="96" loading="lazy">${D.esc(e.t)}, ${e.y}</figure>`).join("")}</div>` : "";
+    dlg.innerHTML = `<div class="dlg"><button class="x" type="button" aria-label="Close">×</button>
+      <div>${D.cover(a, 180, 'loading="eager"')}</div>
+      <div><span class="tag">${a.c.map((c) => D.CAT[c]).join(", ")}</span>
+        <h2 id="dlgT" style="margin:8px 0 2px">${D.esc(a.t)}</h2><div class="muted">${D.date(a.d)}</div>
+        <p style="margin:10px 0 0">${D.esc(a.note)}</p>
+        <div class="btns">${D.spotify(a)}<a class="btn" href="https://www.ledzeppelin.com/" target="_blank" rel="noopener">ledzeppelin.com</a></div>
+      </div><div style="grid-column:1/-1">${tracks}${eds}</div></div>`;
+    dlg.querySelector(".x").onclick = () => dlg.close();
+    dlg.showModal();
+    history.replaceState(null, "", "?a=" + a.s);
+  }
+  W.addEventListener("click", (e) => { const b = e.target.closest("[data-s]"); if (b) open(b.dataset.s); });
+  dlg.addEventListener("close", () => { dlg.innerHTML = ""; history.replaceState(null, "", cat === "all" ? location.pathname : "?c=" + cat); });
+  if (D.qs("a")) open(D.qs("a"));
+  dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
+})();
+</script>
+</body>
+</html>

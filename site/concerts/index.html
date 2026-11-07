@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Shows · Led Zeppelin</title>
+<meta name="description" content="Every Led Zeppelin show on record, year by year, from 1968 to 2007, with setlists.">
+<meta property="og:title" content="Shows · Led Zeppelin">
+<meta property="og:description" content="Every Led Zeppelin show on record, year by year, from 1968 to 2007, with setlists.">
+<meta property="og:image" content="/assets/social-preview.png">
+<link rel="preload" href="/fonts/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/d.css">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#202322">
+<script>try{var t=localStorage.getItem("lz_theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<script src="/d.js"></script>
+</head>
+<body>
+<main id="main" class="wrap">
+  <div class="head">
+    <h1>Shows</h1>
+    <p id="lede">Every show on record, year by year, with setlists.</p>
+  </div>
+  <section class="sheet"><h2>Pick a year</h2><div class="years" id="years"></div>
+  </section>
+  <section class="sheet" id="yearSheet"><div class="loading">Loading…</div></section>
+</main>
+<script>
+D.shell("concerts");
+(async () => {
+  const idx = await D.get("/data/index.json");
+  const ys = Object.keys(idx.years);
+  document.getElementById("lede").textContent = `${idx.total} shows on record from ${ys[0]} to ${ys[ys.length - 1]}, in ${idx.countries} countries, ${idx.withSetlist} of them with a setlist. There were no tours in 1974, 1976 or 1978; after 1980 the survivors played together only a handful of times.`;
+  const first = +ys[0], last = +ys[ys.length - 1];
+  let year = D.qs("y") || "1969";
+  const Y = document.getElementById("years");
+  function years() {
+    let h = "";
+    for (let y = first; y <= last; y++) {
+      const n = idx.years[y];
+      h += n ? `<a href="?y=${y}" data-y="${y}" class="${String(y) === year ? "on" : ""}" title="${n} shows">${y}</a>` : `<a class="none" aria-hidden="true">${y}</a>`;
+    }
+    Y.innerHTML = h;
+  }
+  years();
+  Y.addEventListener("click", (e) => {
+    const a = e.target.closest("[data-y]"); if (!a) return;
+    e.preventDefault(); year = a.dataset.y; history.replaceState(null, "", "?y=" + year); years(); draw();
+  });
+
+  const S = document.getElementById("yearSheet");
+  async function draw() {
+    S.innerHTML = `<div class="loading">Loading…</div>`;
+    let shows = [];
+    try { shows = await D.get(`/data/years/${year}.json`); } catch (e) {}
+    shows = shows.slice().reverse();
+    const n = (s) => s.sets.reduce((t, x) => t + x.s.length, 0);
+    S.innerHTML = `<h2>${year} <span class="muted small" style="font-family:var(--body);font-weight:400">${shows.length} shows</span></h2><ul class="rows">` +
+      shows.map((s) => `<li><a class="r" href="/concert/?id=${s.id}"><b>${D.esc(s.v)}</b><span class="muted small">${D.date(s.d, true)} · ${D.esc(D.place(s))}${s.t ? " · " + D.esc(s.t) : ""}</span><span class="end small muted num">${n(s) ? n(s) + " songs" : "no setlist"}</span></a></li>`).join("") + `</ul>`;
+  }
+  draw();
+
+})();
+</script>
+</body>
+</html>

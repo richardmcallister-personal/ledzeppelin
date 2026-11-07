@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Songs · Led Zeppelin</title>
+<meta name="description" content="Every song Led Zeppelin played live, how often and when, plus the studio tracks they never played on stage.">
+<meta property="og:title" content="Songs · Led Zeppelin">
+<meta property="og:description" content="Every song Led Zeppelin played live, how often and when, plus the studio tracks they never played on stage.">
+<meta property="og:image" content="/assets/social-preview.png">
+<link rel="preload" href="/fonts/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/d.css">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#202322">
+<script>try{var t=localStorage.getItem("lz_theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<script src="/d.js"></script>
+</head>
+<body>
+<main id="main" class="wrap">
+  <div class="head">
+    <h1>Songs</h1>
+    <p id="lede">Every song in the setlists on record, and every studio track, with how often it was played live.</p>
+  </div>
+  <div class="tools">
+    <input type="search" class="find" id="q" placeholder="Find a song" aria-label="Find a song" autocomplete="off">
+    <div class="chips" id="kind" role="group" aria-label="Show">
+      <button class="chip" type="button" data-k="all" aria-pressed="true">All</button>
+      <button class="chip" type="button" data-k="own" aria-pressed="false">Their songs</button>
+      <button class="chip" type="button" data-k="cover" aria-pressed="false">Covers</button>
+      <button class="chip" type="button" data-k="never" aria-pressed="false">Never played live</button>
+    </div>
+    <span class="sp"></span>
+    <div class="chips" id="sort" role="group" aria-label="Sort">
+      <button class="chip" type="button" data-o="plays" aria-pressed="true">Most played</button>
+      <button class="chip" type="button" data-o="az" aria-pressed="false">A–Z</button>
+    </div>
+  </div>
+  <section class="sheet"><ul class="rows" id="list"><li class="loading">Loading…</li></ul><div id="moreWrap"></div></section>
+</main>
+<script>
+D.shell("songs");
+(async () => {
+  const [played, home] = await Promise.all([D.get("/data/songs.json"), D.homeOf()]);
+  const seen = new Set(played.map((s) => s.s));
+  const never = Object.entries(home).filter(([k]) => !seen.has(k)).map(([k, h]) => ({ n: h.n, s: k, k: 0, a: h.a }));
+  const songs = played.map((s) => ({ ...s, a: home[s.s] && home[s.s].a })).concat(never);
+  const own = played.filter((s) => !s.c).length;
+  document.getElementById("lede").textContent = `${played.length} songs in the setlists on record (${own} of their own, ${played.length - own} by others), and ${never.length} studio tracks they never played live. Tap one for every performance.`;
+  let kind = "all", order = "plays", q = "", limit = 100;
+  const L = document.getElementById("list"), M = document.getElementById("moreWrap");
+  const yrs = (s) => s.f[0].slice(0, 4) + (s.l[0].slice(0, 4) !== s.f[0].slice(0, 4) ? "–" + s.l[0].slice(0, 4) : "");
+  function draw() {
+    const norm = (s) => s.normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase();
+    let list = songs.filter((s) => (kind === "all" || (kind === "never" ? !s.k : kind === "own" ? s.k && !s.c : s.k && !!s.c)) && (!q || norm(s.n).includes(norm(q))));
+    if (order === "az") list = list.slice().sort((a, b) => a.n.localeCompare(b.n));
+    L.innerHTML = list.slice(0, limit).map((s) =>
+      `<li><a class="r" href="/song/?s=${s.s}"><b>${D.esc(s.n)}</b><span class="muted small">${s.c ? "Cover of " + D.esc(s.c) + " · " : ""}${s.a ? D.esc(s.a.t) + " · " : ""}${s.k ? yrs(s) : "not played live"}</span><span class="end num big">${s.k || "–"}</span></a></li>`).join("") ||
+      `<li class="empty" style="padding:10px 0">No song matches “${D.esc(q)}”.</li>`;
+    M.innerHTML = list.length > limit ? `<button class="chip" type="button" id="more" style="margin-top:12px">Show all ${list.length}</button>` : "";
+    if (list.length > limit) document.getElementById("more").onclick = () => { limit = 1e9; draw(); };
+  }
+  document.getElementById("q").addEventListener("input", (e) => { q = e.target.value.trim(); limit = 100; draw(); });
+  for (const [id, attr, set] of [["kind", "k", (v) => (kind = v)], ["sort", "o", (v) => (order = v)]]) {
+    const g = document.getElementById(id);
+    g.addEventListener("click", (e) => {
+      const b = e.target.closest("button"); if (!b) return;
+      set(b.dataset[attr]);
+      g.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", x === b));
+      limit = 100; draw();
+    });
+  }
+  draw();
+})();
+</script>
+</body>
+</html>

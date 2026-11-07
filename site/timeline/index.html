@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Timeline · Led Zeppelin</title>
+<meta name="description" content="Led Zeppelin's shows, album releases and milestones, 1968 to 2025.">
+<meta property="og:title" content="Timeline · Led Zeppelin">
+<meta property="og:description" content="Led Zeppelin's shows, album releases and milestones, 1968 to 2025.">
+<meta property="og:image" content="/assets/social-preview.png">
+<link rel="preload" href="/fonts/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/d.css">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#202322">
+<script>try{var t=localStorage.getItem("lz_theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<script src="/d.js"></script>
+</head>
+<body>
+<main id="main" class="wrap"><div class="head"><h1>Timeline</h1><p>The shows, the records and the milestones, from the first rehearsal in 1968 to the documentary in 2025.</p></div>
+<section id="chronology" aria-label="Visual timeline">
+<nav id="decades" aria-label="Choose a decade"></nav>
+<div id="rail"></div>
+</section>
+<h2 id="archive-heading" tabindex="-1">Year-by-year archive</h2>
+<div class="archive-controls"><label>Year<select id="year"><option value="">All years</option></select></label><label>Show<select id="kind"><option value="">All events</option><option>Milestones</option><option>Awards</option><option>Albums</option><option>Concerts</option></select></label></div><p class="small muted" id="count" aria-live="polite"></p><div id="years-list"></div>
+<p id="status" role="status">Loading…</p></main>
+<script>D.shell("timeline");</script>
+<script src="/timeline/page.js"></script>
+</body></html>

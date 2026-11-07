@@ -1,0 +1,243 @@
+[
+ {
+  "id": "start",
+  "title": "Start here",
+  "years": "1969–1975",
+  "intro": "Four albums that show the range: the blues weight of the early records, the acoustic side and the long epics.",
+  "stops": [
+   {
+    "a": "led-zeppelin-iv",
+    "why": "The best known of the lot, and the widest spread in one place: hard rock, folk, blues and the eight-minute centrepiece.",
+    "try": [
+     "Black Dog",
+     "Stairway to Heaven",
+     "When the Levee Breaks"
+    ]
+   },
+   {
+    "a": "led-zeppelin-ii",
+    "why": "Written and recorded on the road in 1969. Riffs first, songs built around them.",
+    "try": [
+     "Whole Lotta Love",
+     "Heartbreaker",
+     "Ramble On"
+    ]
+   },
+   {
+    "a": "physical-graffiti",
+    "why": "A double album that covers everything they did, with Kashmir at its centre.",
+    "try": [
+     "Kashmir",
+     "Trampled Under Foot",
+     "Ten Years Gone"
+    ]
+   },
+   {
+    "a": "houses-of-the-holy",
+    "why": "Brighter and more varied, with longer arrangements and more keyboards.",
+    "try": [
+     "The Song Remains the Same",
+     "The Rain Song",
+     "No Quarter"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "blues",
+  "title": "The blues roots",
+  "years": "1968–1970",
+  "intro": "They began as a heavy blues band. These records lean on Chicago and Delta blues, some of it credited to its writers only after later legal disputes.",
+  "stops": [
+   {
+    "a": "led-zeppelin",
+    "why": "Made in a few days in late 1968. Two Willie Dixon songs and a long slow blues sit beside the originals.",
+    "try": [
+     "You Shook Me",
+     "I Can't Quit You Baby",
+     "Dazed and Confused"
+    ]
+   },
+   {
+    "a": "led-zeppelin-ii",
+    "why": "Blues forms pushed louder and harder.",
+    "try": [
+     "The Lemon Song",
+     "Bring It On Home"
+    ]
+   },
+   {
+    "a": "led-zeppelin-iii",
+    "why": "The slowest, deepest blues they recorded in the studio.",
+    "try": [
+     "Since I've Been Loving You",
+     "Gallows Pole"
+    ]
+   },
+   {
+    "a": "bbc-sessions",
+    "why": "The same songs on the radio in 1969, often stretched out and played differently.",
+    "try": [
+     "Travelling Riverside Blues",
+     "You Shook Me"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "acoustic",
+  "title": "The acoustic side",
+  "years": "1970–1975",
+  "intro": "From the third album on, acoustic guitars and mandolins were as much part of the sound as amplifiers. Many of these songs began in Wales.",
+  "stops": [
+   {
+    "a": "led-zeppelin-iii",
+    "why": "The second side is almost all acoustic, written at a cottage in mid Wales.",
+    "try": [
+     "That's the Way",
+     "Bron-Y-Aur Stomp",
+     "Tangerine"
+    ]
+   },
+   {
+    "a": "led-zeppelin-iv",
+    "why": "Mandolin and a guest voice, Sandy Denny, on one song; a quiet one about California on another.",
+    "try": [
+     "The Battle of Evermore",
+     "Going to California"
+    ]
+   },
+   {
+    "a": "houses-of-the-holy",
+    "why": "Songs that start acoustic and build.",
+    "try": [
+     "The Rain Song",
+     "Over the Hills and Far Away"
+    ]
+   },
+   {
+    "a": "physical-graffiti",
+    "why": "Short acoustic pieces among the long electric ones.",
+    "try": [
+     "Bron-Yr-Aur",
+     "Black Country Woman",
+     "Boogie with Stu"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "epics",
+  "title": "The long songs",
+  "years": "1968–1979",
+  "intro": "Pieces of eight minutes and more, built in sections, where the band stretched out in the studio as they did on stage.",
+  "stops": [
+   {
+    "a": "led-zeppelin",
+    "why": "The earliest of their long pieces, and a stage favourite for a decade.",
+    "try": [
+     "Dazed and Confused",
+     "How Many More Times"
+    ]
+   },
+   {
+    "a": "physical-graffiti",
+    "why": "Two of their longest studio recordings.",
+    "try": [
+     "Kashmir",
+     "In My Time of Dying",
+     "In the Light"
+    ]
+   },
+   {
+    "a": "presence",
+    "why": "Opens with a ten-minute song recorded fast in Munich.",
+    "try": [
+     "Achilles Last Stand",
+     "Tea for One"
+    ]
+   },
+   {
+    "a": "in-through-the-out-door",
+    "why": "Keyboard-led, and their last long piece.",
+    "try": [
+     "Carouselambra",
+     "In the Evening"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "live",
+  "title": "Live Zeppelin",
+  "years": "1969–2007",
+  "intro": "On stage the songs changed every night. These releases cover the radio sessions, the 1972 and 1973 tours and the reunion.",
+  "stops": [
+   {
+    "a": "bbc-sessions",
+    "why": "Radio sessions and concerts from 1969 and 1971.",
+    "try": [
+     "Communication Breakdown",
+     "Whole Lotta Love"
+    ]
+   },
+   {
+    "a": "how-the-west-was-won",
+    "why": "Two California nights in June 1972, released in 2003.",
+    "try": [
+     "Immigrant Song",
+     "Dazed and Confused"
+    ]
+   },
+   {
+    "a": "the-song-remains-the-same",
+    "why": "Madison Square Garden, July 1973, from the concert film.",
+    "try": [
+     "The Song Remains the Same",
+     "No Quarter"
+    ]
+   },
+   {
+    "a": "celebration-day",
+    "why": "The only full show after 1980, at the O2 in December 2007.",
+    "try": [
+     "Kashmir",
+     "For Your Life"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "last",
+  "title": "The last chapter",
+  "years": "1976–1982",
+  "intro": "After Plant's car crash and before the end: harder, then lighter and more open to new sounds.",
+  "stops": [
+   {
+    "a": "presence",
+    "why": "Guitar-led, no keyboards, no acoustics; made quickly while Plant was recovering.",
+    "try": [
+     "Achilles Last Stand",
+     "Nobody's Fault but Mine"
+    ]
+   },
+   {
+    "a": "in-through-the-out-door",
+    "why": "Recorded in Stockholm; Jones's keyboards shape the sound.",
+    "try": [
+     "All My Love",
+     "Fool in the Rain"
+    ]
+   },
+   {
+    "a": "coda",
+    "why": "Leftovers from across their career, gathered after they split.",
+    "try": [
+     "We're Gonna Groove",
+     "Bonzo's Montreux",
+     "Wearing and Tearing"
+    ]
+   }
+  ]
+ }
+]

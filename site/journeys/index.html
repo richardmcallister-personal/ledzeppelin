@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Listening journeys · Led Zeppelin</title>
+<meta name="description" content="Six routes through Led Zeppelin's records, each a handful of albums in order, with the songs to start with.">
+<meta property="og:title" content="Listening journeys · Led Zeppelin">
+<meta property="og:description" content="Six routes through Led Zeppelin's records, each a handful of albums in order, with the songs to start with.">
+<meta property="og:image" content="/assets/social-preview.png">
+<link rel="preload" href="/fonts/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/d.css">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#202322">
+<script>try{var t=localStorage.getItem("lz_theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<script src="/d.js"></script>
+</head>
+<body>
+<main id="main" class="wrap">
+  <div class="head">
+    <h1>Where to start</h1>
+    <p>Six listening routes, each a handful of records in order, with the songs to start with.</p>
+  </div>
+  <div class="jcards" id="cards"></div>
+  <section class="sheet" id="route" style="margin-top:20px" hidden></section>
+</main>
+<script>
+D.shell("journeys");
+(async () => {
+  const [js, albums, songs] = await Promise.all([D.get("/data/journeys.json"), D.albums(), D.get("/data/songs.json")]);
+  const byS = Object.fromEntries(albums.map((a) => [a.s, a]));
+  const played = Object.fromEntries(songs.map((s) => [s.s, s]));
+  const cards = document.getElementById("cards"), R = document.getElementById("route");
+  cards.innerHTML = js.map((j) =>
+    `<a class="jcard" href="#${j.id}" data-j="${j.id}"><div class="mosaic">${j.stops.slice(0, 4).map((s) => byS[s.a] ? D.cover(byS[s.a], 80, 'alt=""') : "").join("")}</div><div class="t"><b>${D.esc(j.title)}</b><span>${D.esc(j.years)} · ${j.stops.length} stops</span></div></a>`).join("");
+
+  function song(t) {
+    const p = played[D.slug(t)];
+    return p ? `<a href="/song/?s=${p.s}">${D.esc(t)}</a> <span class="muted">(${p.k} live)</span>` : `${D.esc(t)} <span class="muted">(not played live)</span>`;
+  }
+  function show(id, scroll) {
+    const j = js.find((x) => x.id === id);
+    cards.querySelectorAll(".jcard").forEach((c) => c.setAttribute("aria-current", c.dataset.j === id));
+    if (!j) { R.hidden = true; return; }
+    R.hidden = false;
+    R.innerHTML = `<span class="tag">${D.esc(j.years)}</span><h2 style="margin-top:8px">${D.esc(j.title)}</h2><p>${D.esc(j.intro)}</p>
+      <ol class="stops">${j.stops.map((s) => {
+        const a = byS[s.a];
+        if (!a) return "";
+        return `<li class="stop"><div class="art">${D.cover(a, 96)}</div><div>
+          <h3>${D.esc(a.t)} <span class="muted small" style="font-family:var(--body);font-weight:400">${a.y}</span></h3>
+          <p style="margin:4px 0 0">${D.esc(s.why)}</p>
+          <div class="songs">Start with: ${s.try.map(song).join(" · ")}</div>
+          <div class="btns">${D.spotify(a)}<a class="btn" href="/albums/?a=${a.s}">Track list</a></div>
+        </div></li>`;
+      }).join("")}</ol>`;
+    if (scroll) R.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  window.addEventListener("hashchange", () => show(location.hash.slice(1), true));
+  show(location.hash.slice(1) || js[0].id, !!location.hash);
+})();
+</script>
+</body>
+</html>

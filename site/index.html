@@ -1,1 +1,127 @@
-<!doctype html><title>Led Zeppelin</title><p>Coming soon.
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Led Zeppelin · records, songs and shows</title>
+<meta name="description" content="Every Led Zeppelin show on record from 1968 to 2007, every song they played live, the albums and listening journeys.">
+<meta property="og:title" content="Led Zeppelin · records, songs and shows">
+<meta property="og:description" content="Every Led Zeppelin show on record from 1968 to 2007, every song they played live, the albums and listening journeys.">
+<meta property="og:image" content="/assets/social-preview.png">
+<link rel="preload" href="/fonts/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/d.css">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#202322">
+<script>try{var t=localStorage.getItem("lz_theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<script src="/d.js"></script>
+</head>
+<body>
+<main id="main" class="wrap">
+  <section class="hero">
+    <h1>The records, the songs, the shows.</h1>
+    <p>Every Led Zeppelin show on record from 1968 to the 2007 reunion, every song they played, and the albums, with ways in for newcomers and long-time listeners.</p>
+    <div class="stats" id="stats"><div><b>520</b><span>shows</span></div><div><b>103</b><span>songs played live</span></div><div><b>9</b><span>studio albums</span></div><div><b>19</b><span>countries</span></div></div>
+    <div class="strip" id="strip" aria-hidden="true"></div>
+  </section>
+
+  <div class="hub">
+    <div class="col">
+      <section class="sheet" id="last" style="min-height:220px">
+        <h2><a href="/concerts/">The last show</a></h2>
+        <div class="loading">Loading…</div>
+      </section>
+      <section class="sheet">
+        <h2 class="row"><span>Shows by year</span><a class="tlink" href="/concerts/">All shows</a></h2>
+        <div id="years"></div>
+      </section>
+    </div>
+    <div class="col">
+      <section class="sheet">
+        <span class="tag">Most played</span>
+        <h2 style="margin-top:10px;font-size:24px"><a href="/song/?s=dazed-and-confused">Dazed and Confused</a></h2>
+        <p id="dazed">On the first album, in the first sets in 1968 and still there at the O2 in 2007: the song they played more than any other.</p>
+        <a class="btn pri" href="/song/?s=dazed-and-confused">Every performance</a>
+      </section>
+      <section class="sheet" id="otd">
+        <h2>On this day</h2>
+        <ul class="rows"></ul>
+      </section>
+    </div>
+    <div class="col">
+      <section class="sheet" id="top">
+        <h2 class="row"><span>Most played live</span><a class="tlink" href="/songs/">All songs</a></h2>
+        <ul class="rows"></ul>
+      </section>
+    </div>
+  </div>
+
+  <section style="margin-top:24px">
+    <h2 class="row"><span style="font-size:24px">Listening journeys</span><a class="tlink" href="/journeys/">All journeys</a></h2>
+    <div class="jcards" id="journeys"></div>
+  </section>
+
+  <nav class="bandstrip" aria-label="The band">
+    <a href="/band/#jimmy-page"><i class="sym page"></i><b>Jimmy Page</b><span>Guitars, producer</span></a>
+    <a href="/band/#robert-plant"><i class="sym plant"></i><b>Robert Plant</b><span>Vocals</span></a>
+    <a href="/band/#john-paul-jones"><i class="sym jones"></i><b>John Paul Jones</b><span>Bass, keyboards</span></a>
+    <a href="/band/#john-bonham"><i class="sym bonham"></i><b>John Bonham</b><span>Drums</span></a>
+  </nav>
+
+  <a class="photofeature" href="/gallery/">
+    <img src="/img/1973-los-angeles.webp" srcset="/img/1973-los-angeles-s.webp 480w, /img/1973-los-angeles.webp 1200w" sizes="(max-width:640px) 100vw, 60vw" width="1200" height="709" alt="Led Zeppelin on stage at the Forum, Los Angeles, 31 May 1973" loading="lazy">
+    <div><span class="tag">Gallery</span><h2 style="margin-top:10px;font-size:24px">From the archive</h2><p>Posters, promo shots and stage photos from 1969 to 1980.</p><span class="visit">Open the gallery</span></div>
+  </a>
+</main>
+<script>
+D.shell("home");
+(async () => {
+  const [albums, idx, songs, otd, journeys] = await Promise.all([
+    D.albums(), D.get("/data/index.json"), D.get("/data/songs.json"), D.get("/data/otd.json"), D.get("/data/journeys.json"),
+  ]);
+  const byS = Object.fromEntries(albums.map((a) => [a.s, a]));
+  const ys = Object.keys(idx.years);
+  document.getElementById("stats").innerHTML =
+    `<div><b class="num">${idx.total}</b><span>shows, ${ys[0]}–${ys[ys.length - 1]}</span></div>` +
+    `<div><b class="num">${idx.songs}</b><span>songs played live</span></div>` +
+    `<div><b class="num">${albums.filter((a) => a.c.includes("studio")).length}</b><span>studio albums</span></div>` +
+    `<div><b class="num">${idx.countries}</b><span>countries</span></div>`;
+  document.getElementById("strip").innerHTML = albums.map((a) => D.cover(a, 78, 'alt=""')).join("");
+
+  const dz = songs.find((s) => s.s === "dazed-and-confused");
+  if (dz) document.getElementById("dazed").textContent = `On the first album, in the first sets in ${dz.f[0].slice(0, 4)} and still there at the O2 in ${dz.l[0].slice(0, 4)}: played ${dz.k} times on record, more than any other song.`;
+
+  const band = ys.filter((y) => +y <= 1980);
+  const counts = Object.fromEntries(band.map((y) => [y, idx.years[y]]));
+  document.getElementById("years").innerHTML = D.bars(counts, +band[0], 1980) +
+    `<p class="small muted" style="margin:8px 0 0">After 1980: ${ys.filter((y) => +y > 1980).map((y) => `<a href="/concerts/?y=${y}">${y}</a>`).join(" · ")}</p>`;
+
+  document.querySelector("#top .rows").innerHTML = songs.slice(0, 10).map((s, i) =>
+    `<li><a class="r" href="/song/?s=${s.s}"><b>${i + 1}. ${D.esc(s.n)}</b><span class="muted small">${s.f[0].slice(0, 4)}–${s.l[0].slice(0, 4)}</span><span class="end num big">${s.k}</span></a></li>`).join("");
+
+  const md = D.today().slice(5);
+  const list = (otd[md] || []).slice().sort((a, b) => b[0] - a[0]);
+  document.querySelector("#otd .rows").innerHTML = list.length
+    ? list.slice(0, 6).map(([y, id, v, c, cc]) => `<li><a class="r" href="/concert/?id=${id}"><b>${D.esc(v)}</b><span class="muted small">${D.esc(c)}, ${cc}</span><span class="end num">${y}</span></a></li>`).join("") +
+      (list.length > 6 ? `<li class="small muted" style="padding-top:8px">and ${list.length - 6} more on this date</li>` : "")
+    : `<li class="empty">No shows on record for ${D.date("2000-" + md).replace(" 2000", "")}.</li>`;
+
+  document.getElementById("journeys").innerHTML = journeys.map((j) =>
+    `<a class="jcard" href="/journeys/#${j.id}"><div class="mosaic">${j.stops.slice(0, 4).map((s) => byS[s.a] ? D.cover(byS[s.a], 80, 'alt=""') : "").join("")}</div><div class="t"><b>${D.esc(j.title)}</b><span>${D.esc(j.years)} · ${j.stops.length} stops</span></div></a>`).join("");
+
+  const L = document.getElementById("last");
+  if (idx.last) {
+    let s = null;
+    try { s = await D.get(`/api/setlist?id=${idx.last.id}`); } catch (e) {}
+    const songsIn = s ? s.sets.flatMap((x) => x.s) : [];
+    L.innerHTML = `<h2><a href="/concerts/">The last show</a></h2>
+      <div class="big t">${D.esc(idx.last.v)}</div>
+      <div class="muted">${D.esc(idx.last.c)} · ${D.date(idx.last.d, true)}</div>
+      ${songsIn.length ? `<ol class="small" style="margin:12px 0 0;padding-left:22px">${songsIn.slice(0, 7).map((x) => `<li><a href="/song/?s=${D.slug(x.n)}">${D.esc(x.n)}</a></li>`).join("")}</ol>` : ""}
+      <a class="more" href="/concert/?id=${idx.last.id}">Full setlist${songsIn.length ? ` (${songsIn.length} songs)` : ""}</a>`;
+  }
+})();
+</script>
+</body>
+</html>

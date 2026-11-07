@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Song · Led Zeppelin</title>
+<meta name="description" content="Every live performance of a Led Zeppelin song.">
+<meta property="og:title" content="Song · Led Zeppelin">
+<meta property="og:description" content="Every live performance of a Led Zeppelin song.">
+<meta property="og:image" content="/assets/social-preview.png">
+<link rel="preload" href="/fonts/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/d.css">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#202322">
+<script>try{var t=localStorage.getItem("lz_theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<script src="/d.js"></script>
+</head>
+<body>
+<main id="main" class="wrap"><div class="loading">Loading…</div></main>
+<script>
+D.shell("songs");
+(async () => {
+  const M = document.getElementById("main");
+  const slug = D.slug(D.qs("s") || "");
+  const [songs, home] = await Promise.all([D.get("/data/songs.json"), D.homeOf()]);
+  const s = songs.find((x) => x.s === slug);
+  const h0 = home[slug];
+  if (!s && !h0) {
+    M.innerHTML = `<div class="head"><h1>Song not found</h1><p>No song by that name is in the catalogue or the setlists. <a href="/songs/">Browse all songs</a>.</p></div>`;
+    return;
+  }
+  const name = s ? s.n : h0.n;
+  document.title = `${name} · Led Zeppelin`;
+  const spotify = `https://open.spotify.com/search/${encodeURIComponent("Led Zeppelin " + name)}`;
+  const onAlbum = h0 ? `<div class="sheet" style="display:flex;gap:14px;align-items:center"><a href="/albums/?a=${h0.a.s}" style="flex:none">${D.cover(h0.a, 72)}</a><div><span class="muted small">From the album</span><br><a href="/albums/?a=${h0.a.s}"><b>${D.esc(h0.a.t)}</b></a> <span class="muted">${h0.a.y}</span></div></div>` : "";
+  let h = `<div class="head"><span class="tag">${s && s.c ? "Cover · " + D.esc(s.c) : "Song"}</span>
+    <h1 style="margin-top:8px">${D.esc(name)}</h1>
+    <div class="btns"><a class="btn pri" href="${spotify}" target="_blank" rel="noopener">Find on Spotify</a></div></div>${onAlbum}`;
+  if (!s) {
+    M.innerHTML = h + `<section class="sheet"><h2>Never played live</h2><p>No performance of this song is in the setlists on record at setlist.fm. If you know of one, it can be added there.</p><a class="more" href="/songs/">All songs</a></section><div id="listen"></div>`;
+  } else {
+    const rank = songs.indexOf(s) + 1;
+    const perf = await D.get(`/data/song/${slug}.json`);
+    const years = Object.keys(s.y).map(Number);
+    const peak = Object.entries(s.y).sort((a, b) => b[1] - a[1])[0];
+    h += `<div class="tiles" style="margin-bottom:16px">
+      <div class="tile"><b class="num">${s.k}</b><span>times played live · #${rank} overall</span></div>
+      <div class="tile"><b class="num">${s.f[0].slice(0, 4)}</b><span>first: <a href="/concert/?id=${s.f[1]}">${D.date(s.f[0])}</a></span></div>
+      <div class="tile"><b class="num">${s.l[0].slice(0, 4)}</b><span>last: <a href="/concert/?id=${s.l[1]}">${D.date(s.l[0])}</a></span></div>
+      <div class="tile"><b class="num">${years.length}</b><span>different years · peak ${peak[0]} (${peak[1]})</span></div>
+    </div><div id="listen"></div>`;
+    const band = years.filter((y) => y <= 1980);
+    if (band.length) h += `<section class="sheet"><h2>Live, year by year</h2>${D.bars(s.y, 1968, 1980, (y, n) => n && n === peak[1])}
+      ${years.some((y) => y > 1980) ? `<p class="small muted" style="margin-top:8px">Also played at the reunions in ${years.filter((y) => y > 1980).join(", ")}.</p>` : ""}
+      <p class="small muted" style="margin-top:8px">Performance counts from setlist.fm. Years with no shows: 1974, 1976, 1978.</p></section>`;
+    const byYear = {};
+    for (const p of perf.p) (byYear[p[0].slice(0, 4)] = byYear[p[0].slice(0, 4)] || []).push(p);
+    const ylist = Object.keys(byYear).sort().reverse();
+    h += `<section class="sheet"><h2>Every performance <span class="muted small" style="font-family:var(--body);font-weight:400">${perf.p.length}</span></h2>` +
+      ylist.map((y, i) => `<details class="yr-perf"${i === 0 ? " open" : ""}><summary>${y} <span class="muted">· ${byYear[y].length}</span></summary><ul>` +
+        byYear[y].slice().reverse().map(([d, id, v, c, cc]) => `<li><a href="/concert/?id=${id}">${D.date(d)}</a> · ${D.esc(v)}, ${D.esc(c)} <span class="muted">${cc}</span></li>`).join("") + `</ul></details>`).join("") +
+      `</section>`;
+    M.innerHTML = h;
+  }
+  try {
+    const t = await D.get(`/api/spotify?q=${encodeURIComponent(name)}`);
+    if (t.id) document.getElementById("listen").innerHTML = `<section class="sheet"><h2>Listen</h2>${D.player("track", t.id, t.album ? `${t.name} · ${t.album}` : t.name)}</section>`;
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>

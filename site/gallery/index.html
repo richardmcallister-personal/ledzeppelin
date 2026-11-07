@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Gallery · Led Zeppelin</title>
+<meta name="description" content="Led Zeppelin posters, promo shots and stage photos from 1969 to 1980.">
+<meta property="og:title" content="Gallery · Led Zeppelin">
+<meta property="og:description" content="Led Zeppelin posters, promo shots and stage photos from 1969 to 1980.">
+<meta property="og:image" content="/assets/social-preview.png">
+<link rel="preload" href="/fonts/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/d.css">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#202322">
+<script>try{var t=localStorage.getItem("lz_theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<script src="/d.js"></script>
+</head>
+<body>
+<main id="main" class="wrap">
+  <div class="head"><h1>Gallery</h1><p>Posters, promo shots and stage photos. Tap a picture to see it larger. Photographers' credits are shown where the original carries one.</p></div>
+  <div class="gal" id="gal"><div class="loading">Loading…</div></div>
+</main>
+<dialog class="photo" id="big" aria-label="Photo"></dialog>
+<script>
+D.shell("gallery");
+(async () => {
+  const g = await D.get("/data/gallery.json");
+  const when = (d) => !d ? "" : d.length === 4 ? d : D.date(d);
+  const G = document.getElementById("gal");
+  G.innerHTML = g.map((p, i) => `<figure><button type="button" data-i="${i}" aria-label="Enlarge: ${D.esc(p.t)}"><img src="/img/${p.s}-s.webp" alt="${D.esc(p.t)}" loading="lazy" decoding="async"></button>
+    <figcaption>${D.esc(p.t)}${p.d ? `<small>${when(p.d)}</small>` : ""}</figcaption></figure>`).join("");
+  const dlg = document.getElementById("big");
+  G.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-i]"); if (!b) return;
+    const p = g[+b.dataset.i];
+    dlg.innerHTML = `<img src="/img/${p.s}.webp" alt="${D.esc(p.t)}"><p>${D.esc(p.t)}${p.d ? " · " + when(p.d) : ""}</p>`;
+    dlg.showModal();
+  });
+  dlg.addEventListener("click", () => dlg.close());
+})();
+</script>
+</body>
+</html>
