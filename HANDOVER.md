@@ -9,7 +9,9 @@ Start a new chat with `richardmcallister-personal/ledzeppelin` attached. Read `C
 - **Home:** hero with counts and cover strip; the last show (O2, 10 Dec 2007, setlist live); shows-per-year bars;
   Dazed and Confused feature; On this day; top 10 most played; journeys; the four members with their symbols;
   gallery feature.
-- **Albums:** 16 releases (9 studio incl. Coda, live, films, Mothership, Live E.P. 2025); dialog with note, track
+- **Albums:** 21 releases (9 studio incl. Coda, live, films, 6 compilations incl. the 1990 box set, Remasters,
+  Early Days / Latter Days / The Very Best of, Mothership; Live E.P. 2025). Compilation dates before 2007 are
+  month- or year-level (`D.date` handles YYYY-MM and YYYY); dialog with note, track
   list with live counts, later editions (deluxe / 2018 remasters / Complete BBC Sessions / film) as small covers.
 - **Songs:** setlist songs plus the 23 studio tracks never played live on record; filters own / covers / never.
 - **Song, Shows, Setlist:** as on bobdylan.app, without tour dates.
@@ -19,8 +21,8 @@ Start a new chat with `richardmcallister-personal/ledzeppelin` attached. Read `C
 ## Known gaps / next
 
 1. Custom domain: none yet — add routes to wrangler.jsonc when Richard picks one (www redirect is already generic).
-2. Covers missing from the kit: Led Zeppelin (1990 box set), Remasters, Early Days / Latter Days, BBC Sessions'
-   2016 deluxe is used as an edition; nothing for Physical Graffiti 1975 vinyl variants (not needed).
+2. Compilation covers added 7 Nov (box set, Remasters, Early Days, Latter Days, The Very Best of). Exact day of
+   release not filled for those; add if a reliable source turns up.
 3. Gallery captions for kit/photos/* are generic (no dates/places known) — ask Richard if he has them.
 4. setlist.fm data is user-entered: some songs are missing from some setlists (e.g. very few In Through the Out
    Door songs). Corrections go to setlist.fm, then re-run the builder.

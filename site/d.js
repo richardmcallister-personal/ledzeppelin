@@ -18,6 +18,8 @@
   D.date = (iso, long) => {
     if (!iso) return "";
     const [y, m, d] = iso.split("-").map(Number);
+    if (!m) return String(y);
+    if (!d) return `${MON[m - 1]} ${y}`;
     if (long) {
       const wd = new Date(Date.UTC(y, m - 1, d)).toLocaleDateString("en-GB", { weekday: "short", timeZone: "UTC" });
       return `${wd} ${d} ${MON[m - 1]} ${y}`;

@@ -580,6 +580,71 @@
   "ss": "https://open.spotify.com/search/Led%20Zeppelin%20Led%20Zeppelin"
  },
  {
+  "s": "led-zeppelin-box-set",
+  "t": "Led Zeppelin (box set)",
+  "d": "1990-10",
+  "y": 1990,
+  "c": [
+   "comp"
+  ],
+  "note": "Four discs remastered under Jimmy Page's supervision, with the songs in a new running order rather than album by album.",
+  "tr": [],
+  "ed": [],
+  "ss": "https://open.spotify.com/search/Led%20Zeppelin%20Led%20Zeppelin%20%28box%20set%29"
+ },
+ {
+  "s": "remasters",
+  "t": "Remasters",
+  "d": "1990-10",
+  "y": 1990,
+  "c": [
+   "comp"
+  ],
+  "note": "A two-disc selection from the 1990 box set.",
+  "tr": [],
+  "ed": [],
+  "ss": "https://open.spotify.com/search/Led%20Zeppelin%20Remasters"
+ },
+ {
+  "s": "early-days",
+  "t": "Early Days: The Best of Led Zeppelin Volume One",
+  "d": "1999-11",
+  "y": 1999,
+  "c": [
+   "comp"
+  ],
+  "note": "The first of two best-of volumes, drawn from the first four albums.",
+  "tr": [],
+  "ed": [],
+  "ss": "https://open.spotify.com/search/Led%20Zeppelin%20Early%20Days%3A%20The%20Best%20of%20Led%20Zeppelin%20Volume%20One"
+ },
+ {
+  "s": "latter-days",
+  "t": "Latter Days: The Best of Led Zeppelin Volume Two",
+  "d": "2000-03",
+  "y": 2000,
+  "c": [
+   "comp"
+  ],
+  "note": "The second volume, from Houses of the Holy to In Through the Out Door.",
+  "tr": [],
+  "ed": [],
+  "ss": "https://open.spotify.com/search/Led%20Zeppelin%20Latter%20Days%3A%20The%20Best%20of%20Led%20Zeppelin%20Volume%20Two"
+ },
+ {
+  "s": "the-very-best-of-led-zeppelin",
+  "t": "The Very Best of Led Zeppelin: Early Days & Latter Days",
+  "d": "2002",
+  "y": 2002,
+  "c": [
+   "comp"
+  ],
+  "note": "The two best-of volumes together in one set.",
+  "tr": [],
+  "ed": [],
+  "ss": "https://open.spotify.com/search/Led%20Zeppelin%20The%20Very%20Best%20of%20Led%20Zeppelin%3A%20Early%20Days%20%26%20Latter%20Days"
+ },
+ {
   "s": "mothership",
   "t": "Mothership",
   "d": "2007-11-12",

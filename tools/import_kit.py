@@ -20,6 +20,8 @@ COVERS = {
     "presence-deluxe": "presence_deluxe", "in-through-the-out-door-deluxe": "ittod_deluxe", "coda-deluxe": "coda_deluxe",
     "the-song-remains-the-same-2018": "tsrts_2018", "the-song-remains-the-same-film": "tsrts-film",
     "the-complete-bbc-sessions": "bbc_complete", "how-the-west-was-won-2018": "htwww_deluxe",
+    "led-zeppelin-box-set": "box_1990", "remasters": "remasters", "early-days": "early_days",
+    "latter-days": "latter_days", "the-very-best-of-led-zeppelin": "very_best",
 }
 PHOTOS = {
     "1969-paris-poster": "archive/1969-12-06---paris---piston70---poster_c3qtgng8", "1969-jones-promo": "archive/1969-jpj-promo",
