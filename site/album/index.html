@@ -114,7 +114,7 @@ D.shell("albums");
       <span class="tag">${a.c.map((c) => D.CAT[c]).join(", ")} · ${a.y}</span>
       <h1>${D.esc(a.t)}</h1>
       <p class="lede">${D.esc(n.about || a.note)}</p>
-      <div class="btns">${main ? `<a class="btn pri" href="https://open.spotify.com/album/${main.id}" target="_blank" rel="noopener">Open in Spotify</a>` : D.spotify(a)}<a class="btn" href="${dg && !dg.stale && dg.master ? dg.master.url : discogs}" target="_blank" rel="noopener">${dg && !dg.stale ? "All pressings on Discogs" : "Sleeves and pressings on Discogs"}</a></div>
+      <div class="btns">${main ? `<a class="btn pri" href="https://open.spotify.com/album/${main.id}" target="_blank" rel="noopener">Open in Spotify</a>` : D.spotify(a)}${dg && !dg.stale ? "" : `<a class="btn" href="${discogs}" target="_blank" rel="noopener">Sleeves and pressings on Discogs</a>`}</div>
       ${main ? D.player("album", main.id, main.name) : ""}
     </div>
   </section>
