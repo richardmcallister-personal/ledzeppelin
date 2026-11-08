@@ -1,0 +1,18 @@
+{
+ "concerts": {
+  "13d6bd65": "celebration-day-art",
+  "2bd600de": "msg-1973-poster",
+  "33d600dd": "msg-1973-poster",
+  "3bd600dc": "msg-1973-poster"
+ },
+ "albums": {
+  "the-song-remains-the-same": {
+   "s": "msg-1973-poster",
+   "t": "Madison Square Garden, July 1973, where it was recorded"
+  },
+  "celebration-day": {
+   "s": "celebration-day-art",
+   "t": "The Celebration Day artwork"
+  }
+ }
+}

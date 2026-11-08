@@ -85,6 +85,7 @@ D.shell("albums");
   const discogs = `https://www.discogs.com/search/?q=${encodeURIComponent("Led Zeppelin " + a.t.replace(" (DVD)", ""))}&type=master`;
   const art = [{ s: a.s, t: "Original release", y: a.y }, ...a.ed];
   const prev = albums[i - 1], next = albums[i + 1];
+  const extra = ((await D.get("/data/art.json").catch(() => ({ albums: {} }))).albums || {})[slug];
 
   // Discogs (pushed from Richard's Mac, never older than 5.5 hours). Attribution required by the Discogs API Terms.
   let dgSections = "", dgCredits = "";
@@ -125,6 +126,7 @@ D.shell("albums");
       <section class="sheet"><h2>The artwork</h2>${n.cover ? `<p>${D.esc(n.cover)}</p>` : ""}
         ${art.length > 1 ? `<div class="edgrid">${art.map((e) => `<figure><a href="/covers/${e.s}.webp" target="_blank" rel="noopener"><img src="/covers/${e.s}.webp" alt="${D.esc(a.t + ", " + e.t)} cover" width="120" height="120" loading="lazy"></a>${D.esc(e.t)}, ${e.y}</figure>`).join("")}</div>` : ""}
         ${a.ed.filter((e) => sp[e.s] && (!sp[a.s] || sp[e.s].id !== main.id)).map((e) => D.player("album", sp[e.s].id, sp[e.s].name)).join("")}
+        ${extra ? `<figure class="albumart"><a href="/img/${extra.s}.webp" target="_blank" rel="noopener"><img src="/img/${extra.s}-s.webp" alt="${D.esc(extra.t)}" loading="lazy"></a><figcaption class="small muted">${D.esc(extra.t)}</figcaption></figure>` : ""}
         ${dg && !dg.stale ? "" : `<p class="small muted" style="margin:12px 0 0">Back covers, inner sleeves and labels for every pressing are on <a href="${discogs}" target="_blank" rel="noopener">Discogs</a>.</p>`}</section>
       ${dgSections}
       ${n.influence && n.influence.length ? `<section class="sheet"><h2>Influence and afterlife</h2><ul class="infl">${n.influence.map((x) => `<li>${D.esc(x)}</li>`).join("")}</ul></section>` : ""}

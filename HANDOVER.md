@@ -76,3 +76,9 @@ The Worker trims and keeps each item in KV for 5.5 hours (DG_TTL) — Discogs AP
 each with "Data provided by Discogs" linked to the release; the footer carries Discogs' required non-affiliation notice.
 If the Mac is off, data expires and pages fall back to the Discogs links. /health shows discogs.lastPush and fresh.
 Master/release IDs: tools/discogs_ids.json. Log on the Mac: ~/Library/Logs/ledzeppelin-discogs.log. Remove: uninstall.sh.
+
+## Supplied artwork (8 Nov)
+
+kit/art/ (Richard's files, used as supplied): celebration-day-art (home "last show" card + O2 2007 show page banner +
+Celebration Day album page), msg-1973-poster (MSG 27–29 July 1973 show banners + The Song Remains the Same album page),
+swan-song-icarus (404 page), patch-swan-song and patch-wordmark (gallery, Archive). Placement map: site/data/art.json.

@@ -74,4 +74,9 @@ for c in json.loads((K / "tour/captions.json").read_text()):
     tour.append({"s": stem, "t": c["caption"], "d": c["date"], "k": c["type"], "src": c["source"], "w": w, "h": h})
 tour.sort(key=lambda x: (x["d"], x["s"]))
 (S / "data/tour-photos.json").write_text(json.dumps(tour, ensure_ascii=False, indent=1))
+# Artwork Richard supplied (kit/art): webp at 1200 + 480, used as supplied
+for f in sorted((K / "art").glob("*.png")):
+    im = Image.open(f).convert("RGB")
+    for px, suf in ((1200, ""), (480, "-s")):
+        c = im.copy(); c.thumbnail((px, px), Image.LANCZOS); c.save(S / "img" / f"{f.stem}{suf}.webp", quality=80, method=6)
 print(len(COVERS), "covers,", len(PHOTOS), "photos,", len(faces), "influence images,", len(tour), "tour photos")

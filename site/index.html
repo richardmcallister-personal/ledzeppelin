@@ -118,7 +118,9 @@ D.shell("home");
     let s = null;
     try { s = await D.get(`/api/setlist?id=${idx.last.id}`); } catch (e) {}
     const songsIn = s ? s.sets.flatMap((x) => x.s) : [];
-    L.innerHTML = `<h2><a href="/concerts/">The last show</a></h2>
+    const art = await D.get("/data/art.json").catch(() => ({ concerts: {} }));
+    const pic = art.concerts[idx.last.id];
+    L.innerHTML = `${pic ? `<a class="showart" href="/concert/?id=${idx.last.id}"><img src="/img/${pic}-s.webp" alt="" loading="lazy"></a>` : ""}<h2><a href="/concerts/">The last show</a></h2>
       <div class="big t">${D.esc(idx.last.v)}</div>
       <div class="muted">${D.esc(idx.last.c)} · ${D.date(idx.last.d, true)}</div>
       ${songsIn.length ? `<ol class="small" style="margin:12px 0 0;padding-left:22px">${songsIn.slice(0, 7).map((x) => `<li><a href="/song/?s=${D.slug(x.n)}">${D.esc(x.n)}</a></li>`).join("")}</ol>` : ""}

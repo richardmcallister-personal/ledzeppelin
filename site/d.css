@@ -441,3 +441,11 @@ ul.people span{color:var(--muted);font-size:14px}
 .dgpics button{appearance:none;border:0;padding:0;background:var(--tint);border-radius:8px;overflow:hidden;cursor:zoom-in;aspect-ratio:1}
 .dgpics img{width:100%;height:100%;object-fit:contain;display:block}
 .dgsrc{margin:10px 0 0}
+.lost{max-width:260px;margin:24px 0 0;background:var(--paper);border-radius:var(--radius);padding:16px}
+.lost img{width:100%;height:auto;display:block;border-radius:8px}
+.showart{display:block;margin:-4px -4px 14px;border-radius:12px;overflow:hidden}
+.showart img{width:100%;aspect-ratio:16/7;object-fit:cover;display:block}
+.showbanner{border-radius:var(--radius);overflow:hidden;margin-bottom:8px}
+.showbanner img{width:100%;max-height:340px;object-fit:cover;display:block}
+.albumart{margin:14px 0 0}
+.albumart img{width:100%;height:auto;border-radius:10px;display:block;margin-bottom:6px}
