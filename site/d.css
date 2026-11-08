@@ -373,3 +373,15 @@ dialog.photo p{color:#fff;text-align:center;margin:10px 0 0}
 .photofeature p{color:var(--muted-on-black)}
 .photofeature .visit{text-decoration:underline;text-underline-offset:3px}
 @media(max-width:640px){.photofeature{grid-template-columns:1fr}.photofeature img{height:200px}}
+.cards3{display:grid;gap:16px;grid-template-columns:1fr}
+@media (min-width:700px){.cards3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:1000px){.cards3{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.cards3 .sheet{margin:0;scroll-margin-top:140px}
+.cards3 h3{margin:8px 0 2px;font-size:20px}
+.cards3 .from{color:var(--muted);font-size:14px;margin:0 0 10px}
+.tag.alt{background:var(--tint);color:var(--muted)}
+.artist .top{display:flex;align-items:baseline;gap:12px}
+.artist .top h3{margin:0;flex:1}
+.artist .top .big{font-size:30px;line-height:1}
+.artist .rows{margin-top:8px}
+.artist .rows .r{padding:6px 0}

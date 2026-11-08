@@ -17,6 +17,10 @@ Start a new chat with `richardmcallister-personal/ledzeppelin` attached. Read `C
 - **Song, Shows, Setlist:** as on bobdylan.app, without tour dates.
 - **Journeys** (6), **Band** (members + Peter Grant, Jason Bonham), **Timeline** (milestones + releases + shows),
   **Gallery** (13 supplied photos with tap-to-enlarge).
+- **Influences** (8 Nov): "Credits and the courts" (5 hand-checked notes in data/influences.json: Babe I'm Gonna
+  Leave You, Dazed and Confused, Whole Lotta Love, The Lemon Song, Stairway) and every artist covered on stage,
+  built live from songs.json, grouped by style (groups hand-kept in influences.json — add any new setlist.fm
+  artist there). Song pages link the cover artist and show the credit note. In archive nav, footer and search.
 
 ## Known gaps / next
 

@@ -24,7 +24,7 @@ D.shell("songs");
 (async () => {
   const M = document.getElementById("main");
   const slug = D.slug(D.qs("s") || "");
-  const [songs, home] = await Promise.all([D.get("/data/songs.json"), D.homeOf()]);
+  const [songs, home, infl] = await Promise.all([D.get("/data/songs.json"), D.homeOf(), D.get("/data/influences.json")]);
   const s = songs.find((x) => x.s === slug);
   const h0 = home[slug];
   if (!s && !h0) {
@@ -35,9 +35,11 @@ D.shell("songs");
   document.title = `${name} · Led Zeppelin`;
   const spotify = `https://open.spotify.com/search/${encodeURIComponent("Led Zeppelin " + name)}`;
   const onAlbum = h0 ? `<div class="sheet" style="display:flex;gap:14px;align-items:center"><a href="/albums/?a=${h0.a.s}" style="flex:none">${D.cover(h0.a, 72)}</a><div><span class="muted small">From the album</span><br><a href="/albums/?a=${h0.a.s}"><b>${D.esc(h0.a.t)}</b></a> <span class="muted">${h0.a.y}</span></div></div>` : "";
-  let h = `<div class="head"><span class="tag">${s && s.c ? "Cover · " + D.esc(s.c) : "Song"}</span>
+  let h = `<div class="head"><span class="tag">${s && s.c ? `Cover · <a href="/influences/#${D.slug(s.c)}">${D.esc(s.c === "[traditional]" ? "traditional" : s.c)}</a>` : "Song"}</span>
     <h1 style="margin-top:8px">${D.esc(name)}</h1>
     <div class="btns"><a class="btn pri" href="${spotify}" target="_blank" rel="noopener">Find on Spotify</a></div></div>${onAlbum}`;
+  const cr = infl.credits.find((c) => c.s === slug);
+  if (cr) h += `<section class="sheet"><span class="tag">${D.esc(cr.status)}</span><h2 style="margin-top:8px">Writing credit</h2><p style="margin:0">${D.esc(cr.note)}</p><a class="more" href="/influences/#credit-${cr.s}">Influences</a></section>`;
   if (!s) {
     M.innerHTML = h + `<section class="sheet"><h2>Never played live</h2><p>No performance of this song is in the setlists on record at setlist.fm. If you know of one, it can be added there.</p><a class="more" href="/songs/">All songs</a></section><div id="listen"></div>`;
   } else {

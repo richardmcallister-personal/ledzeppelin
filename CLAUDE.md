@@ -9,7 +9,7 @@ bobdylan.app (repo `richardmcallister-personal/dylan`), which is modelled on man
 ```
 kit/                  Richard's supplied assets, as uploaded (releases/, archive/, photos/, marks/, icons/). Not served.
 site/                 the site, served at the root: one index.html per page, shared d.css + d.js
-site/data/            JSON the pages read: albums, band, gallery, journeys, milestones (hand-kept);
+site/data/            JSON the pages read: albums, band, gallery, influences, journeys, milestones (hand-kept);
                       index, songs, song/, years/, otd (built from setlist.fm)
 site/covers/          album covers (400 px webp) made from kit/releases
 site/img/             photos (1200 px + 480 px -s webp) made from kit/archive and kit/photos
@@ -23,7 +23,7 @@ tools/build_setlists.py   setlist.fm (via the Worker) → data/index, years/, so
 ```
 
 Pages: `/` · `/albums/` (cover wall, `?a=<slug>` opens one) · `/songs/` · `/song/?s=<slug>` · `/concerts/?y=` ·
-`/concert/?id=<setlist.fm id>` · `/journeys/` · `/band/` · `/timeline/` · `/gallery/`.
+`/concert/?id=<setlist.fm id>` · `/journeys/` · `/band/` · `/influences/` · `/timeline/` · `/gallery/`.
 Slugs: lower-case, apostrophes dropped, other runs of non-alphanumerics → `-` (`D.slug` in d.js = `slug()` in
 the Python tools; keep them identical). Album tracks link to setlist songs by slug; where the stage title differs,
 map it in `LIVE_AS` in catalogue.py.

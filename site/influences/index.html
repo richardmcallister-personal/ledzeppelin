@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Influences · Led Zeppelin</title>
+<meta name="description" content="The songs Led Zeppelin took from others: writing credits that changed, and every artist they covered on stage.">
+<meta property="og:title" content="Influences · Led Zeppelin">
+<meta property="og:description" content="The songs Led Zeppelin took from others: writing credits that changed, and every artist they covered on stage.">
+<meta property="og:image" content="/assets/social-preview.png">
+<link rel="preload" href="/fonts/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/d.css">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#202322">
+<script>try{var t=localStorage.getItem("lz_theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<script src="/d.js"></script>
+</head>
+<body>
+<main id="main" class="wrap">
+  <div class="head"><h1>Influences</h1><p id="lede"></p></div>
+
+  <section style="margin-top:8px">
+    <h2 style="font-size:24px">Credits and the courts</h2>
+    <p class="muted" style="margin:-4px 0 14px">Songs whose writers were named only later, or whose credit was tested in court.</p>
+    <div class="cards3" id="credits"><div class="loading">Loading…</div></div>
+  </section>
+
+  <section style="margin-top:32px">
+    <h2 style="font-size:24px">Who they covered on stage</h2>
+    <p class="muted" id="coverlede" style="margin:-4px 0 14px"></p>
+    <div class="tools"><div class="chips" id="groups" role="group" aria-label="Filter by style"></div></div>
+    <div class="cards3" id="artists"></div>
+    <p class="small muted" id="source" style="margin-top:16px"></p>
+  </section>
+</main>
+<script>
+D.shell("influences");
+(async () => {
+  const [inf, songs] = await Promise.all([D.get("/data/influences.json"), D.get("/data/songs.json")]);
+  document.getElementById("lede").textContent = inf.intro;
+  document.getElementById("source").textContent = inf.source;
+  const bySlug = Object.fromEntries(songs.map((s) => [s.s, s]));
+
+  document.getElementById("credits").innerHTML = inf.credits.map((c) => {
+    const live = bySlug[c.s];
+    return `<article class="sheet" id="credit-${c.s}"><span class="tag${c.status === "Credit unchanged" ? " alt" : ""}">${D.esc(c.status)}</span>
+      <h3><a href="/song/?s=${c.s}">${D.esc(c.song)}</a></h3>
+      <p class="from">After ${D.esc(c.from)}${live ? ` · played live ${live.k} times` : ""}</p>
+      <p style="margin:0">${D.esc(c.note)}</p></article>`;
+  }).join("");
+
+  const groupOf = {};
+  for (const [g, list] of Object.entries(inf.groups)) for (const a of list) groupOf[a] = g;
+  const artists = {};
+  for (const s of songs) {
+    if (!s.c) continue;
+    const a = (artists[s.c] = artists[s.c] || { name: s.c, total: 0, songs: {} });
+    const base = s.n.split(" / (")[0];
+    const t = (a.songs[base] = a.songs[base] || { n: base, s: s.s, k: 0, f: s.f[0], l: s.l[0] });
+    t.k += s.k; a.total += s.k;
+    if (s.f[0] < t.f) t.f = s.f[0];
+    if (s.l[0] > t.l) t.l = s.l[0];
+  }
+  const list = Object.values(artists).sort((x, y) => y.total - x.total || x.name.localeCompare(y.name));
+  const label = (n) => (n === "[traditional]" ? "Traditional songs" : n);
+  const yrs = (t) => t.f.slice(0, 4) + (t.l.slice(0, 4) !== t.f.slice(0, 4) ? "–" + t.l.slice(0, 4) : "");
+  const nSongs = list.reduce((n, a) => n + Object.keys(a.songs).length, 0);
+  const nPlays = list.reduce((n, a) => n + a.total, 0);
+  document.getElementById("coverlede").textContent = `${nSongs} songs by ${list.length} artists in the setlists on record, played ${nPlays} times in all. Most were early-years encores and medley detours; a few stayed in the set for a decade.`;
+
+  let group = "all";
+  const G = document.getElementById("groups");
+  const count = (g) => (g === "all" ? list.length : list.filter((a) => groupOf[a.name] === g).length);
+  G.innerHTML = ["all", ...Object.keys(inf.groups)].map((g) =>
+    `<button class="chip" type="button" data-g="${D.esc(g)}" aria-pressed="${g === group}">${g === "all" ? "All" : D.esc(g)}<span class="n">${count(g)}</span></button>`).join("");
+  G.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-g]"); if (!b) return;
+    group = b.dataset.g;
+    G.querySelectorAll("[data-g]").forEach((x) => x.setAttribute("aria-pressed", x === b));
+    draw();
+  });
+  const A = document.getElementById("artists");
+  function draw() {
+    A.innerHTML = list.filter((a) => group === "all" || groupOf[a.name] === group).map((a) => {
+      const ss = Object.values(a.songs).sort((x, y) => y.k - x.k);
+      return `<article class="sheet artist" id="${D.slug(a.name)}">
+        <div class="top"><h3>${D.esc(label(a.name))}</h3><b class="num big">${a.total}</b></div>
+        <div class="muted small">${D.esc(groupOf[a.name] || "")} · ${ss.length} song${ss.length > 1 ? "s" : ""} · ${a.total === 1 ? "1 performance" : a.total + " performances"}</div>
+        <ul class="rows">${ss.map((t) => `<li><a class="r" href="/song/?s=${t.s}"><b>${D.esc(t.n)}</b><span class="muted small">${yrs(t)}</span><span class="end num">${t.k}</span></a></li>`).join("")}</ul>
+      </article>`;
+    }).join("");
+  }
+  draw();
+  if (location.hash) document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView();
+})();
+</script>
+</body>
+</html>

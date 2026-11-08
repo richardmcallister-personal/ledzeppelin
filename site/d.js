@@ -8,7 +8,7 @@
     ["concerts", "/concerts/", "Shows", '<path d="M4 20h16M6 20V9l6-5 6 5v11"/><path d="M10 20v-5h4v5"/>'],
     ["journeys", "/journeys/", "Journeys", '<path d="M3 17c4 0 4-10 9-10s5 10 9 10"/><circle cx="3" cy="17" r="1.5"/><circle cx="21" cy="17" r="1.5"/>'],
   ];
-  const archiveNav = [["band", "/band/", "The band"], ["timeline", "/timeline/", "Timeline"], ["gallery", "/gallery/", "Gallery"]];
+  const archiveNav = [["band", "/band/", "The band"], ["influences", "/influences/", "Influences"], ["timeline", "/timeline/", "Timeline"], ["gallery", "/gallery/", "Gallery"]];
   const ic = (p) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
 
   D.esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -92,7 +92,7 @@
       <div class="fcols">
         ${col("Listen", [["/albums/", "Albums"], ["/journeys/", "Listening journeys"], ["/songs/", "Songs"]])}
         ${col("Live", [["/concerts/", "Shows by year"], ["/concert/?id=13d6bd65", "The O2, 2007"]])}
-        ${col("Archive", [["/band/", "The band"], ["/timeline/", "Timeline"], ["/gallery/", "Gallery"]])}
+        ${col("Archive", [["/band/", "The band"], ["/influences/", "Influences"], ["/timeline/", "Timeline"], ["/gallery/", "Gallery"]])}
         ${col("Official", [["https://www.ledzeppelin.com/", "ledzeppelin.com"], ["https://www.setlist.fm/setlists/led-zeppelin-bd6bd12.html", "setlist.fm"]])}
       </div>
     </div>`;
@@ -134,8 +134,8 @@
     const normalize = s => String(s).normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/['’]/g,"").replace(/[^\p{L}\p{N}]+/gu," ").trim();
     let index, selected = -1, visible = [], groups = [], limit = 4, revision = 0;
     async function build() {
-      const [songs, albums, band, milestones, days, journeys] = await Promise.all(
-        ["songs","albums","band","milestones","otd","journeys"].map(name=>D.get("/data/"+name+".json")));
+      const [songs, albums, band, milestones, days, journeys, infl] = await Promise.all(
+        ["songs","albums","band","milestones","otd","journeys","influences"].map(name=>D.get("/data/"+name+".json")));
       const rows = [], live = new Set(songs.map(s=>s.s));
       function add(group,title,detail,url,extra="",weight=0,image="") {
         rows.push({group,title,detail,url,weight,image,key:normalize(title),text:normalize([title,detail,extra].join(" "))});
@@ -150,6 +150,10 @@
         add("Concerts",venue,[city,country,D.date(date)].filter(Boolean).join(" · "),"/concert/?id="+id,date);
       }
       for(const j of journeys) add("Journeys",j.title,j.years,"/journeys/#"+j.id,j.intro);
+      const covered = {};
+      for(const s of songs) if(s.c) (covered[s.c] = covered[s.c] || []).push(s.n.split(" / (")[0]);
+      for(const [a,ns] of Object.entries(covered)) add("Influences",a==="[traditional]"?"Traditional songs":a,"Covered on stage · "+[...new Set(ns)].join(", "),"/influences/#"+D.slug(a),"");
+      for(const c of infl.credits) add("Influences",c.song+": credit",c.status+" · after "+c.from,"/influences/#credit-"+c.s,c.note);
       return rows;
     }
     function draw() {

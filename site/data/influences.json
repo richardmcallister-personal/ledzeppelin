@@ -1,0 +1,23 @@
+{
+ "intro": "Led Zeppelin began as a blues band, and other people's songs ran through their records and their shows. Below: the writing credits that changed after the event, and every artist whose songs they played on stage.",
+ "credits": [
+  {"s": "babe-im-gonna-leave-you", "song": "Babe, I'm Gonna Leave You", "from": "Anne Bredon", "status": "Credit added",
+   "note": "Written by Anne Bredon in the 1950s and known to Page from Joan Baez's 1962 recording. The first album credited it as traditional, arranged by Page. Later releases credit Anne Bredon with Page and Plant."},
+  {"s": "dazed-and-confused", "song": "Dazed and Confused", "from": "Jake Holmes", "status": "Credit added",
+   "note": "Jake Holmes recorded a song of the same name in 1967 and played it in New York on a bill with the Yardbirds, Page's band at the time. Holmes sued in 2010 and the case was settled. Celebration Day (2012) credits the song to Page, inspired by Jake Holmes."},
+  {"s": "whole-lotta-love", "song": "Whole Lotta Love", "from": "Willie Dixon", "status": "Credit added",
+   "note": "Willie Dixon sued in 1985, saying the words drew on his song You Need Love, recorded by Muddy Waters in 1962. The case was settled and Dixon is now credited as a co-writer."},
+  {"s": "the-lemon-song", "song": "The Lemon Song", "from": "Howlin' Wolf", "status": "Credit added",
+   "note": "On stage in 1969 it was introduced as Killing Floor, a Howlin' Wolf song. After a settlement in the early 1970s, later releases credit Chester Burnett, Howlin' Wolf's real name."},
+  {"s": "stairway-to-heaven", "song": "Stairway to Heaven", "from": "Spirit", "status": "Credit unchanged",
+   "note": "The estate of Randy California of Spirit claimed the opening drew on the 1968 instrumental Taurus. A jury found no copyright infringement in 2016, and the verdict was upheld on appeal in 2020."}
+ ],
+ "groups": {
+  "Blues": ["Willie Dixon", "Blind Willie Johnson", "Howlin’ Wolf", "Otis Rush", "Memphis Minnie & Kansas Joe McCoy", "Muddy Waters", "Robert Johnson", "Joe Williams' Washboard Blues Singers", "Arthur “Big Boy” Crudup", "Little Junior’s Blue Flames"],
+  "Rock and roll": ["Eddie Cochran", "Little Richard", "Jerry Lee Lewis", "Chuck Berry", "Bo Diddley", "Gene Vincent & His Blue Caps", "Chris Montez", "Tiny Bradshaw"],
+  "R&B and soul": ["Ben E. King", "Garnet Mimms", "Barrett Strong", "Sly & the Family Stone", "Tommy Tucker", "Richard Berry & the Pharaohs"],
+  "Folk and traditional": ["Jake Holmes", "Joan Baez", "[traditional]"],
+  "Pop and other": ["The Beatles", "Graham Gouldman", "Hoagy Carmichael and His Orchestra", "Sammy Kaye and His Orchestra", "Johnny Smith", "Mildred J. Hill & Patty Hill"]
+ },
+ "source": "Original artists as listed by setlist.fm, which names the first recording of each song, so the name is not always the writer."
+}
