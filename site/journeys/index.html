@@ -53,7 +53,7 @@ D.shell("journeys");
           <h3>${D.esc(a.t)} <span class="muted small" style="font-family:var(--body);font-weight:400">${a.y}</span></h3>
           <p style="margin:4px 0 0">${D.esc(s.why)}</p>
           <div class="songs">Start with: ${s.try.map(song).join(" · ")}</div>
-          <div class="btns">${D.spotify(a)}<a class="btn" href="/albums/?a=${a.s}">Track list</a></div>
+          <div class="btns">${D.spotify(a)}<a class="btn" href="/album/?a=${a.s}">Album page</a></div>
         </div></li>`;
       }).join("")}</ol>`;
     if (scroll) R.scrollIntoView({ behavior: "smooth", block: "start" });

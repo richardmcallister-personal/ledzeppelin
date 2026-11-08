@@ -21,7 +21,7 @@
 <main id="main" class="wrap">
   <div class="head">
     <h1>The cover wall</h1>
-    <p>The nine studio albums, the live records and films, and the compilations. Tap a cover for the track list, how often each song was played live, and later editions.</p>
+    <p>The nine studio albums, the live records and films, and the compilations. Tap a cover for the album's own page: who played, where it was recorded, the artwork, the charts and every track.</p>
   </div>
   <div class="tools">
     <div class="chips" id="cats" role="group" aria-label="Filter by type"></div>
@@ -66,7 +66,7 @@ D.shell("albums");
     for (const a of list) {
       const d = Math.floor(a.y / 10) * 10;
       if (d !== dec) { dec = d; h += `<div class="yr">${d}s</div>`; }
-      h += `<button class="cv" type="button" data-s="${a.s}"><div class="art">${D.cover(a, 160)}</div><b>${D.esc(a.t)}</b><span>${a.y} · ${a.c.map((c) => D.CAT[c]).join(", ")}</span></button>`;
+      h += `<a class="cv" href="/album/?a=${a.s}"><div class="art">${D.cover(a, 160)}</div><b>${D.esc(a.t)}</b><span>${a.y} · ${a.c.map((c) => D.CAT[c]).join(", ")}</span></a>`;
     }
     W.innerHTML = h || `<p class="empty">Nothing here.</p>`;
   }
@@ -93,7 +93,7 @@ D.shell("albums");
   }
   W.addEventListener("click", (e) => { const b = e.target.closest("[data-s]"); if (b) open(b.dataset.s); });
   dlg.addEventListener("close", () => { dlg.innerHTML = ""; history.replaceState(null, "", cat === "all" ? location.pathname : "?c=" + cat); });
-  if (D.qs("a")) open(D.qs("a"));
+  if (D.qs("a")) location.replace("/album/?a=" + encodeURIComponent(D.qs("a")));
   dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
 })();
 </script>

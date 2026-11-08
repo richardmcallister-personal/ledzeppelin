@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Album · Led Zeppelin</title>
+<meta name="description" content="A Led Zeppelin album: who played, where it was recorded, the artwork, the charts and every track.">
+<meta property="og:title" content="Album · Led Zeppelin">
+<meta property="og:description" content="A Led Zeppelin album: who played, where it was recorded, the artwork, the charts and every track.">
+<meta property="og:image" content="/assets/social-preview.png">
+<link rel="preload" href="/fonts/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/d.css">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#202322">
+<script>try{var t=localStorage.getItem("lz_theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<script src="/d.js"></script>
+</head>
+<body>
+<main id="main" class="wrap"><div class="loading">Loading…</div></main>
+<script>
+D.shell("albums");
+(async () => {
+  const M = document.getElementById("main");
+  const slug = (D.qs("a") || "").replace(/[^a-z0-9-]/g, "");
+  const albums = (await D.albums()).slice().sort((x, y) => x.d.localeCompare(y.d));
+  const i = albums.findIndex((x) => x.s === slug);
+  const a = albums[i];
+  if (!a) {
+    M.innerHTML = `<div class="head"><h1>Album not found</h1><p><a href="/albums/">Browse all albums</a>.</p></div>`;
+    return;
+  }
+  document.title = `${a.t} (${a.y}) · Led Zeppelin`;
+  const [d, notes, songs] = await Promise.all([
+    D.get(`/data/album/${slug}.json`).catch(() => ({})),
+    D.get("/data/album_notes.json").catch(() => ({})),
+    D.get("/data/songs.json").catch(() => []),
+  ]);
+  const n = notes[slug] || {};
+  const live = Object.fromEntries(songs.map((s) => [s.s, s]));
+  const list = (xs) => (xs || []).filter(Boolean).map(D.esc).join(", ");
+  const tidy = (t) => t.replace(/\s*\((?:remaster|live|.*version|.*mix|.*take|.*sessions?).*?\)\s*$/i, "");
+  const songOf = (title) => live[D.slug(tidy(title))] || live[D.slug(title)];
+
+  const facts = [
+    ["Released", d.released || D.date(a.d)],
+    ["Recorded", d.recorded],
+    [d.venues && d.venues.length ? "Venues" : "Studios", list(d.venues && d.venues.length ? d.venues : d.studios)],
+    ["Producer", list(d.producers)],
+    ["Label", d.label],
+    ["Length", d.length],
+    ["Genre", list(d.genres)],
+  ].filter(([, v]) => v);
+
+  // Tracks, grouped by side or disc
+  const groups = [];
+  for (const t of d.tracks || []) {
+    let g = groups[groups.length - 1];
+    if (!g || g.side !== t.side) groups.push((g = { side: t.side || "", tracks: [] }));
+    g.tracks.push(t);
+  }
+  const BIG = (d.tracks || []).length > 40;
+  const lyrics = (t) => `https://www.musixmatch.com/search?query=${encodeURIComponent("Led Zeppelin " + tidy(t))}`;
+  const trackRow = (t) => {
+    const s = songOf(t.title);
+    const meta = [t.writer ? D.esc(t.writer) : "", t.rec ? "rec. " + D.esc(t.rec) : "", t.note ? D.esc(t.note) : ""].filter(Boolean).join(" · ");
+    return `<li><span class="tt">${s ? `<a href="/song/?s=${s.s}">${D.esc(t.title)}</a>` : D.esc(t.title)}${meta ? `<small>${meta}</small>` : ""}</span>
+      <span class="tm">${s ? `<a class="pill" href="/song/?s=${s.s}" title="Times played live">${s.k} live</a>` : ""}<a class="pill" href="${lyrics(t.title)}" target="_blank" rel="noopener" title="Lyrics on Musixmatch">Lyrics</a><span class="len num">${D.esc(t.length || "")}</span></span></li>`;
+  };
+  const tracksHtml = groups.map((g, gi) => {
+    const rows = `<ol class="tracks" start="${g.tracks[0].n || 1}">${g.tracks.map(trackRow).join("")}</ol>`;
+    const h = g.side ? D.esc(g.side) : groups.length > 1 ? `Part ${gi + 1}` : "";
+    return BIG ? `<details class="yr-perf"${gi === 0 ? " open" : ""}><summary>${h || "Tracks"} <span class="muted">· ${g.tracks.length}</span></summary>${rows}</details>` : `${h ? `<h3>${h}</h3>` : ""}${rows}`;
+  }).join("");
+
+  const pg = {};
+  for (const p of d.personnel || []) (pg[p.group || "Led Zeppelin"] = pg[p.group || "Led Zeppelin"] || []).push(p);
+  const people = Object.entries(pg).map(([g, ps]) =>
+    `<h3>${D.esc(g)}</h3><ul class="people">${ps.map((p) => `<li><b>${D.esc(p.name)}</b>${p.role ? `<span>${D.esc(p.role)}</span>` : ""}</li>`).join("")}</ul>`).join("");
+
+  const charts = (d.charts || []).slice().sort((x, y) => +x.peak - +y.peak);
+  const discogs = `https://www.discogs.com/search/?q=${encodeURIComponent("Led Zeppelin " + a.t.replace(" (DVD)", ""))}&type=master`;
+  const art = [{ s: a.s, t: "Original release", y: a.y }, ...a.ed];
+  const prev = albums[i - 1], next = albums[i + 1];
+
+  M.innerHTML = `
+  <section class="ahero">
+    <div class="acover">${D.cover(a, 320, 'loading="eager"')}</div>
+    <div class="ainfo">
+      <span class="tag">${a.c.map((c) => D.CAT[c]).join(", ")} · ${a.y}</span>
+      <h1>${D.esc(a.t)}</h1>
+      <p class="lede">${D.esc(n.about || a.note)}</p>
+      <div class="btns">${D.spotify(a)}<a class="btn" href="${discogs}" target="_blank" rel="noopener">Sleeves and pressings on Discogs</a></div>
+    </div>
+  </section>
+
+  <div class="agrid">
+    <div class="col">
+      ${facts.length ? `<section class="sheet"><h2>The record</h2><dl class="facts">${facts.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl></section>` : ""}
+      <section class="sheet"><h2>The artwork</h2>${n.cover ? `<p>${D.esc(n.cover)}</p>` : ""}
+        ${art.length > 1 ? `<div class="edgrid">${art.map((e) => `<figure><a href="/covers/${e.s}.webp" target="_blank" rel="noopener"><img src="/covers/${e.s}.webp" alt="${D.esc(a.t + ", " + e.t)} cover" width="120" height="120" loading="lazy"></a>${D.esc(e.t)}, ${e.y}</figure>`).join("")}</div>` : ""}
+        <p class="small muted" style="margin:12px 0 0">Back covers, inner sleeves and labels for every pressing are on <a href="${discogs}" target="_blank" rel="noopener">Discogs</a>.</p></section>
+      ${n.influence && n.influence.length ? `<section class="sheet"><h2>Influence and afterlife</h2><ul class="infl">${n.influence.map((x) => `<li>${D.esc(x)}</li>`).join("")}</ul></section>` : ""}
+      ${charts.length ? `<section class="sheet"><h2>Where it charted</h2><ul class="rows">${charts.map((c) => `<li><div class="r"><b>${D.esc(c.chart)}</b><span class="muted small">${c.year || ""}</span><span class="end big num">${D.esc(c.peak)}</span></div></li>`).join("")}</ul>
+        ${(d.certs || []).length ? `<h3>Certifications</h3><p class="small">${d.certs.map((c) => `${D.esc(c.region)}: ${D.esc(c.award)}`).join(" · ")}</p>` : ""}</section>` : ""}
+    </div>
+    <div class="col">
+      <section class="sheet"><h2 class="row"><span>Tracks</span><span class="muted small" style="font-weight:400">${(d.tracks || []).length || ""}</span></h2>
+        ${tracksHtml || `<p class="empty">Track list not available yet.</p>`}
+        <p class="small muted" style="margin:12px 0 0">Lyrics open on Musixmatch, which licenses them; this site does not reproduce them. Live counts are from the setlists on record at setlist.fm.</p></section>
+      ${people ? `<section class="sheet"><h2>Who played</h2>${people}</section>` : ""}
+    </div>
+  </div>
+
+  <nav class="anav">${prev ? `<a href="/album/?a=${prev.s}">← ${D.esc(prev.t)} <span class="muted">${prev.y}</span></a>` : "<span></span>"}${next ? `<a href="/album/?a=${next.s}">${D.esc(next.t)} <span class="muted">${next.y}</span> →</a>` : ""}</nav>
+  <p class="small muted">Facts, musicians, charts and certifications from ${d.wiki ? `<a href="${d.wiki.url}" rel="noopener">Wikipedia</a> (CC BY-SA)` : ""}${d.wiki && d.mb ? " and " : ""}${d.mb ? `<a href="${d.mb.url}" rel="noopener">MusicBrainz</a>` : ""}${!d.wiki && !d.mb ? "the official catalogue" : ""}; notes written for this site.</p>`;
+})();
+</script>
+</body>
+</html>

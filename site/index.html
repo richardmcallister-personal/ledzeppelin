@@ -20,10 +20,11 @@
 <body>
 <main id="main" class="wrap">
   <section class="hero">
+    <img class="hero-emblem" src="/assets/icon-512.png" width="512" height="512" alt="">
     <h1>The records, the songs, the shows.</h1>
     <p>Every Led Zeppelin show on record from 1968 to the 2007 reunion, every song they played, and the albums, with ways in for newcomers and long-time listeners.</p>
     <div class="stats" id="stats"><div><b>520</b><span>shows</span></div><div><b>103</b><span>songs played live</span></div><div><b>9</b><span>studio albums</span></div><div><b>19</b><span>countries</span></div></div>
-    <div class="strip" id="strip" aria-hidden="true"></div>
+    <div class="carousel" id="carousel" aria-label="Albums, oldest first"><button class="arr l" type="button" aria-label="Scroll albums left">‹</button><div class="track" id="strip"></div><button class="arr r" type="button" aria-label="Scroll albums right">›</button></div>
   </section>
 
   <div class="hub">
@@ -87,7 +88,9 @@ D.shell("home");
     `<div><b class="num">${idx.songs}</b><span>songs played live</span></div>` +
     `<div><b class="num">${albums.filter((a) => a.c.includes("studio")).length}</b><span>studio albums</span></div>` +
     `<div><b class="num">${idx.countries}</b><span>countries</span></div>`;
-  document.getElementById("strip").innerHTML = albums.map((a) => D.cover(a, 78, 'alt=""')).join("");
+  const T = document.getElementById("strip");
+  T.innerHTML = albums.slice().sort((x, y) => x.d.localeCompare(y.d)).map((a) => `<a href="/album/?a=${a.s}">${D.cover(a, 96, 'alt=""')}<span>${D.esc(a.t)}</span></a>`).join("");
+  document.querySelectorAll("#carousel .arr").forEach((b) => b.addEventListener("click", () => T.scrollBy({ left: (b.classList.contains("l") ? -1 : 1) * T.clientWidth * 0.8, behavior: "smooth" })));
 
   const dz = songs.find((s) => s.s === "dazed-and-confused");
   if (dz) document.getElementById("dazed").textContent = `On the first album, in the first sets in ${dz.f[0].slice(0, 4)} and still there at the O2 in ${dz.l[0].slice(0, 4)}: played ${dz.k} times on record, more than any other song.`;

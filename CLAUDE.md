@@ -9,7 +9,7 @@ bobdylan.app (repo `richardmcallister-personal/dylan`), which is modelled on man
 ```
 kit/                  Richard's supplied assets, as uploaded (releases/, archive/, photos/, marks/, icons/). Not served.
 site/                 the site, served at the root: one index.html per page, shared d.css + d.js
-site/data/            JSON the pages read: albums, band, credits, gallery, influences, journeys, milestones (hand-kept);
+site/data/            JSON the pages read: albums, album_notes, band, credits, gallery, influences, journeys, milestones (hand-kept);
                       index, songs, song/, years/, otd (built from setlist.fm)
 site/covers/          album covers (400 px webp) made from kit/releases
 site/img/             photos (1200 px + 480 px -s webp) made from kit/archive and kit/photos
@@ -21,9 +21,11 @@ tools/import_kit.py   kit/ → covers, img, logo, symbols, influence images (kit
                       tour photos (kit/tour/ + captions.json → img/tour, data/tour-photos.json)
 tools/catalogue.py    hand-kept album list, track lists, editions → data/albums.json (edit here, not the JSON)
 tools/build_setlists.py   setlist.fm (via the Worker) → data/index, years/, songs, song/, otd
+tools/build_albums.py     Wikipedia (via the Worker's allow-listed /api/wiki; titles in tools/wiki_titles.json)
+                          + MusicBrainz → data/album/<slug>.json (facts, personnel, tracks, charts, certs)
 ```
 
-Pages: `/` · `/albums/` (cover wall, `?a=<slug>` opens one) · `/songs/` · `/song/?s=<slug>` · `/concerts/?y=` ·
+Pages: `/` · `/albums/` (cover wall) · `/album/?a=<slug>` (album page) · `/songs/` · `/song/?s=<slug>` · `/concerts/?y=` ·
 `/concert/?id=<setlist.fm id>` · `/journeys/` · `/band/` · `/influences/` · `/timeline/` · `/gallery/`.
 Slugs: lower-case, apostrophes dropped, other runs of non-alphanumerics → `-` (`D.slug` in d.js = `slug()` in
 the Python tools; keep them identical). Album tracks link to setlist songs by slug; where the stage title differs,
@@ -59,7 +61,7 @@ non-commercial use only: no ads, no paid features.
 
 ## Content rules
 
-- **No lyrics**, not even a line. Track titles only.
+- **No lyrics**, not even a line. Track titles only; album pages link each track to Musixmatch (licensed) for words.
 - Use the supplied silver logo in the masthead and the gold record icon as the emblem; member symbols from
   kit/marks/zep_symbols.png (order in that file: Page, Jones, Bonham, Plant).
 - Editorial text (journeys, album notes, band, timeline) is written fresh, plain and factual. Don't state

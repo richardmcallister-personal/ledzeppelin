@@ -49,3 +49,13 @@ python3 tools/import_kit.py          # after adding files to kit/
 caption, date, archive link). import_kit.py → site/img/tour/ and data/tour-photos.json. Shown on /gallery/ (chips:
 In concert · On the road · Archive) and on any /concert/ page whose date matches (42 do). Captions say
 "publication rights are unverified": each photo links back to its archive entry; ask Richard before wider use.
+
+## Album pages (8 Nov)
+
+/album/?a=<slug> for all 21 releases, modelled on bobdylan.app: hero (cover, note, Spotify, Discogs), The record
+(released, recorded, studios, producer, label, length, genre), The artwork (note + every edition cover from kit/releases),
+Influence and afterlife (hand-written, data/album_notes.json — 10 albums so far), Where it charted + certifications,
+Tracks (live counts + a Lyrics link to Musixmatch; never lyric text), Who played. Facts from Wikipedia via
+tools/build_albums.py. Home hero has the gold record emblem (bobdylan.app's position) and a scrolling album carousel
+linking to the album pages; the cover wall and all /albums/?a= links now go to /album/.
+Inner sleeves: not in the kit — linked to Discogs; add files to kit/releases if Richard supplies them.

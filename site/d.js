@@ -140,7 +140,7 @@
       function add(group,title,detail,url,extra="",weight=0,image="") {
         rows.push({group,title,detail,url,weight,image,key:normalize(title),text:normalize([title,detail,extra].join(" "))});
       }
-      for(const a of albums) add("Albums",a.t,a.y+" · "+a.c.map(k=>D.CAT[k]).join(", "),"/albums/?a="+a.s,a.tr.map(t=>t.n).join(" "),0,"/covers/"+a.s+".webp");
+      for(const a of albums) add("Albums",a.t,a.y+" · "+a.c.map(k=>D.CAT[k]).join(", "),"/album/?a="+a.s,a.tr.map(t=>t.n).join(" "),0,"/covers/"+a.s+".webp");
       for(const s of songs) add("Songs",s.n,s.k+" times live"+(s.c?" · "+s.c+" cover":""),"/song/?s="+s.s,"",s.k);
       for(const a of albums) for(const t of a.tr) if(!live.has(t.s)) add("Songs",t.n,a.t+" · not played live","/song/?s="+t.s,"",0);
       for(const m of band.members) add("The band",m.name,m.role,"/band/#"+m.id,m.note);

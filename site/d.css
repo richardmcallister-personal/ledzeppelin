@@ -386,3 +386,58 @@ dialog.photo p{color:#fff;text-align:center;margin:10px 0 0}
 .artist-heading .ph{display:grid;place-items:center;font-family:var(--brand);font-size:clamp(30px,3vw,40px);color:var(--red-ink)}
 .artist-heading h3{margin:0 0 5px}
 .artist-heading a{font-size:14px;font-weight:600}
+
+/* hero emblem + album carousel (from bobdylan.app) */
+.hero{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);column-gap:32px}
+.hero>*{grid-column:1}
+.hero .hero-emblem{grid-column:2;grid-row:1 / span 3;align-self:center;justify-self:center;width:clamp(200px,24vw,280px);height:auto;border-radius:50%;box-shadow:0 0 0 1px var(--muted-on-black)}
+.hero .strip{grid-column:1 / -1}
+@media (max-width:640px){.hero{grid-template-columns:minmax(0,1fr) auto;column-gap:14px}.hero .hero-emblem{grid-row:1;align-self:start;justify-self:end;width:72px}}
+.hero .carousel{grid-column:1 / -1;margin-top:22px;position:relative}
+.hero .carousel .track{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:2px 0 4px;-webkit-overflow-scrolling:touch}
+.hero .carousel .track::-webkit-scrollbar{display:none}
+.hero .carousel a{flex:none;width:96px;scroll-snap-align:start;text-decoration:none;color:var(--on-black)}
+.hero .carousel img{width:96px;height:96px;border-radius:6px;object-fit:cover;transition:transform .15s}
+.hero .carousel a:hover img{transform:translateY(-3px)}
+.hero .carousel span{display:block;font-size:11px;line-height:1.25;color:var(--muted-on-black);margin-top:6px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.hero .carousel .arr{position:absolute;top:34px;width:36px;height:36px;border-radius:50%;border:0;background:var(--paper);color:var(--ink);font-size:18px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.35);z-index:2}
+.hero .carousel .arr.l{left:-6px}.hero .carousel .arr.r{right:-6px}
+@media (max-width:640px){.hero .carousel .arr{display:none}}
+/* album pages (from bobdylan.app) */
+.ahero{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:28px;align-items:start;background:var(--paper);border-radius:var(--radius);padding:24px;margin-bottom:16px}
+.ahero .acover img{width:100%;height:auto;border-radius:10px}
+.ahero h1{margin:10px 0 10px}
+.ahero .lede{font-size:17px;max-width:68ch}
+@media (max-width:700px){.ahero{grid-template-columns:1fr;padding:18px}.ahero .acover{max-width:240px}}
+.agrid{display:grid;gap:16px;grid-template-columns:1fr;align-items:start}
+.agrid .col{display:flex;flex-direction:column;gap:16px;min-width:0}
+.agrid .col .sheet{margin:0}
+@media (min-width:900px){.agrid{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)}}
+dl.facts{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:8px 16px;margin:0}
+dl.facts dt{color:var(--muted);font-size:14px}
+dl.facts dd{margin:0}
+ul.infl{margin:0;padding-left:20px}
+ul.infl li{margin:0 0 8px}
+ol.tracks{margin:0;padding-left:28px}
+ol.tracks li{padding:7px 0;border-top:1px solid var(--rule)}
+ol.tracks li:first-child{border-top:0}
+ol.tracks li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center}
+ol.tracks li::marker{color:var(--muted)}
+ol.tracks .tt small{display:block;color:var(--muted);font-size:13px}
+ol.tracks .tm{display:flex;gap:6px;align-items:center;justify-content:flex-end}
+@media (max-width:480px){ol.tracks li{grid-template-columns:1fr}ol.tracks .tm{justify-content:flex-start}}
+ol.tracks .len{color:var(--muted);font-size:14px;min-width:38px;text-align:right}
+.pill{font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--tint);color:var(--red-ink);text-decoration:none;white-space:nowrap}
+.pill:hover{background:var(--us)}
+ul.people{list-style:none;margin:0;padding:0}
+ul.people li{padding:6px 0;border-top:1px solid var(--rule)}
+ul.people li:first-child{border-top:0}
+ul.people b{font-weight:600;margin-right:8px}
+ul.people span{color:var(--muted);font-size:14px}
+.anav{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:20px 0 8px}
+.anav a{font-weight:600;text-decoration:none;color:var(--red-ink)}
+.hero .hero-emblem{border-radius:0;box-shadow:none}
+.edgrid{display:flex;flex-wrap:wrap;gap:14px}
+.edgrid figure{margin:0;width:120px;font-size:13px;color:var(--muted)}
+.edgrid img{width:120px;height:120px;border-radius:8px;object-fit:cover;margin-bottom:6px;display:block}
+.cv{text-decoration:none;color:inherit}

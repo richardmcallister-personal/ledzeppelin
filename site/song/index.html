@@ -34,7 +34,7 @@ D.shell("songs");
   const name = s ? s.n : h0.n;
   document.title = `${name} · Led Zeppelin`;
   const spotify = `https://open.spotify.com/search/${encodeURIComponent("Led Zeppelin " + name)}`;
-  const onAlbum = h0 ? `<div class="sheet" style="display:flex;gap:14px;align-items:center"><a href="/albums/?a=${h0.a.s}" style="flex:none">${D.cover(h0.a, 72)}</a><div><span class="muted small">From the album</span><br><a href="/albums/?a=${h0.a.s}"><b>${D.esc(h0.a.t)}</b></a> <span class="muted">${h0.a.y}</span></div></div>` : "";
+  const onAlbum = h0 ? `<div class="sheet" style="display:flex;gap:14px;align-items:center"><a href="/album/?a=${h0.a.s}" style="flex:none">${D.cover(h0.a, 72)}</a><div><span class="muted small">From the album</span><br><a href="/album/?a=${h0.a.s}"><b>${D.esc(h0.a.t)}</b></a> <span class="muted">${h0.a.y}</span></div></div>` : "";
   let h = `<div class="head"><span class="tag">${s && s.c ? "Cover · " + D.esc(s.c === "[traditional]" ? "traditional" : s.c) : "Song"}</span>
     <h1 style="margin-top:8px">${D.esc(name)}</h1>
     <div class="btns"><a class="btn pri" href="${spotify}" target="_blank" rel="noopener">Find on Spotify</a></div></div>${onAlbum}`;
