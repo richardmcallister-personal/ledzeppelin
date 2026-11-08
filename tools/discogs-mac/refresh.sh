@@ -12,11 +12,13 @@ TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
 ok=0; fail=0
 
 push() { # kind id discogs-path
-  if curl -fsS --max-time 60 -A "$UA" -H "Authorization: Discogs token=$TOKEN" "https://api.discogs.com$3" -o "$TMP/d.json"; then
-    if curl -fsS --max-time 60 -X POST -H "x-ingest-token: $TOKEN" -H "content-type: application/json" \
-         --data-binary @"$TMP/d.json" "$SITE/api/discogs-ingest?kind=$1&id=$2" -o /dev/null; then ok=$((ok+1)); else fail=$((fail+1)); fi
+  code=$(curl -sS --max-time 60 -A "$UA" -H "Authorization: Discogs token=$TOKEN" "https://api.discogs.com$3" -o "$TMP/d.json" -w "%{http_code}")
+  if [ "$code" != "200" ]; then
+    fail=$((fail+1)); echo "$(date '+%F %T') Discogs said $code for $1 $2"
   else
-    fail=$((fail+1))
+    code=$(curl -sS --max-time 60 -X POST -H "x-ingest-token: $TOKEN" -H "content-type: application/json" \
+         --data-binary @"$TMP/d.json" "$SITE/api/discogs-ingest?kind=$1&id=$2" -o "$TMP/r.txt" -w "%{http_code}")
+    if [ "$code" = "200" ]; then ok=$((ok+1)); else fail=$((fail+1)); echo "$(date '+%F %T') site said $code for $1 $2: $(head -c 120 "$TMP/r.txt")"; fi
   fi
   sleep 1.2   # Discogs allows 60 authenticated requests a minute
 }

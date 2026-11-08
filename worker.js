@@ -109,7 +109,7 @@ async function health(env) {
   } catch (e) {
     out.spotify.error = e.msg || String(e);
   }
-  out.discogs = { token: !!discogsAuth(env) };
+  out.discogs = { token: !!discogsAuth(env), secrets: Object.keys(env).filter((k) => /discogs/i.test(k)) };
   if (env.LZ_CACHE) {
     const last = await env.LZ_CACHE.get("dg:last", "json");
     out.discogs.lastPush = last ? new Date(last.at).toISOString() : null;
