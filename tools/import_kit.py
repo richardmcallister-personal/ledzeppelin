@@ -45,4 +45,15 @@ sym = Image.open(K / "marks/zep_symbols.png").convert("LA")
 for (a, b), n in zip([(22, 269), (288, 442), (470, 659), (689, 850)], ["page", "jones", "bonham", "plant"]):
     c = sym.crop((a, 0, b, sym.height)); c = c.crop(c.getchannel("A").getbbox())
     out = Image.new("RGBA", c.size, (0, 0, 0, 0)); out.putalpha(c.getchannel("A")); out.save(S / f"assets/sym-{n}.png", optimize=True)
-print(len(COVERS), "covers,", len(PHOTOS), "photos")
+# Influences: kit/influences/<artist-slug>.jpg|png|webp → site/img/influences/<slug>.webp (square, 240 px)
+import json
+(S / "img/influences").mkdir(parents=True, exist_ok=True)
+faces = []
+for f in sorted((K / "influences").glob("*")):
+    if f.suffix.lower() not in (".jpg", ".jpeg", ".png", ".webp"):
+        continue
+    im = Image.open(f).convert("RGB"); w, h = im.size; m = min(w, h)
+    im = im.crop(((w - m) // 2, (h - m) // 2, (w - m) // 2 + m, (h - m) // 2 + m)).resize((240, 240), Image.LANCZOS)
+    im.save(S / "img/influences" / f"{f.stem}.webp", quality=80, method=6); faces.append(f.stem)
+(S / "data/influence-images.json").write_text(json.dumps(faces))
+print(len(COVERS), "covers,", len(PHOTOS), "photos,", len(faces), "influence images")

@@ -150,10 +150,7 @@
         add("Concerts",venue,[city,country,D.date(date)].filter(Boolean).join(" · "),"/concert/?id="+id,date);
       }
       for(const j of journeys) add("Journeys",j.title,j.years,"/journeys/#"+j.id,j.intro);
-      const covered = {};
-      for(const s of songs) if(s.c) (covered[s.c] = covered[s.c] || []).push(s.n.split(" / (")[0]);
-      for(const [a,ns] of Object.entries(covered)) add("Influences",a==="[traditional]"?"Traditional songs":a,"Covered on stage · "+[...new Set(ns)].join(", "),"/influences/#"+D.slug(a),"");
-      for(const c of infl.credits) add("Influences",c.song+": credit",c.status+" · after "+c.from,"/influences/#credit-"+c.s,c.note);
+      for(const a of infl) add("Influences",a.name,a.direction,"/influences/#artist-"+D.slug(a.name),a.note);
       return rows;
     }
     function draw() {

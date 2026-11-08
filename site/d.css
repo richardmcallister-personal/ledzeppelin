@@ -373,15 +373,16 @@ dialog.photo p{color:#fff;text-align:center;margin:10px 0 0}
 .photofeature p{color:var(--muted-on-black)}
 .photofeature .visit{text-decoration:underline;text-underline-offset:3px}
 @media(max-width:640px){.photofeature{grid-template-columns:1fr}.photofeature img{height:200px}}
-.cards3{display:grid;gap:16px;grid-template-columns:1fr}
-@media (min-width:700px){.cards3{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (min-width:1000px){.cards3{grid-template-columns:repeat(3,minmax(0,1fr))}}
-.cards3 .sheet{margin:0;scroll-margin-top:140px}
-.cards3 h3{margin:8px 0 2px;font-size:20px}
-.cards3 .from{color:var(--muted);font-size:14px;margin:0 0 10px}
-.tag.alt{background:var(--tint);color:var(--muted)}
-.artist .top{display:flex;align-items:baseline;gap:12px}
-.artist .top h3{margin:0;flex:1}
-.artist .top .big{font-size:30px;line-height:1}
-.artist .rows{margin-top:8px}
-.artist .rows .r{padding:6px 0}
+.direction-nav{display:flex;flex-wrap:wrap;gap:8px 18px;margin-bottom:22px}
+.direction-nav a{font-weight:650}
+.influence-group{scroll-margin-top:180px;margin:22px 0}
+.influence-group h2{font-size:24px}
+.influence-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(310px,100%),1fr));gap:12px}
+.influence-list article{padding:18px;background:var(--paper);border-radius:var(--radius);scroll-margin-top:185px}
+.influence-list p{margin:4px 0 10px}
+.influence-list .src{font-size:13px;color:var(--muted)}
+.artist-heading{display:flex;align-items:center;gap:16px;margin-bottom:14px}
+.artist-heading img,.artist-heading .ph{display:block;width:clamp(90px,9vw,116px);height:auto;aspect-ratio:1;object-fit:cover;border-radius:12px;background:var(--tint)}
+.artist-heading .ph{display:grid;place-items:center;font-family:var(--brand);font-size:clamp(30px,3vw,40px);color:var(--red-ink)}
+.artist-heading h3{margin:0 0 5px}
+.artist-heading a{font-size:14px;font-weight:600}

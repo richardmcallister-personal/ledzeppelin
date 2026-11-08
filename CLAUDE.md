@@ -9,7 +9,7 @@ bobdylan.app (repo `richardmcallister-personal/dylan`), which is modelled on man
 ```
 kit/                  Richard's supplied assets, as uploaded (releases/, archive/, photos/, marks/, icons/). Not served.
 site/                 the site, served at the root: one index.html per page, shared d.css + d.js
-site/data/            JSON the pages read: albums, band, gallery, influences, journeys, milestones (hand-kept);
+site/data/            JSON the pages read: albums, band, credits, gallery, influences, journeys, milestones (hand-kept);
                       index, songs, song/, years/, otd (built from setlist.fm)
 site/covers/          album covers (400 px webp) made from kit/releases
 site/img/             photos (1200 px + 480 px -s webp) made from kit/archive and kit/photos
@@ -17,7 +17,7 @@ site/assets/          logo, member symbols (alpha masks), app icons; manifest.we
 site/fonts/           self-hosted Anton (big figures); text is the system font stack
 worker.js             serves site/, proxies setlist.fm with a KV cache, /api/spotify, /health, www → apex
 wrangler.jsonc        Worker `ledzeppelin`, KV LZ_CACHE
-tools/import_kit.py   kit/ → covers, img, logo, symbols
+tools/import_kit.py   kit/ → covers, img, logo, symbols, influence images (kit/influences/<artist-slug>.jpg)
 tools/catalogue.py    hand-kept album list, track lists, editions → data/albums.json (edit here, not the JSON)
 tools/build_setlists.py   setlist.fm (via the Worker) → data/index, years/, songs, song/, otd
 ```

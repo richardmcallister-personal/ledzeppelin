@@ -17,10 +17,12 @@ Start a new chat with `richardmcallister-personal/ledzeppelin` attached. Read `C
 - **Song, Shows, Setlist:** as on bobdylan.app, without tour dates.
 - **Journeys** (6), **Band** (members + Peter Grant, Jason Bonham), **Timeline** (milestones + releases + shows),
   **Gallery** (13 supplied photos with tap-to-enlarge).
-- **Influences** (8 Nov): "Credits and the courts" (5 hand-checked notes in data/influences.json: Babe I'm Gonna
-  Leave You, Dazed and Confused, Whole Lotta Love, The Lemon Song, Stairway) and every artist covered on stage,
-  built live from songs.json, grouped by style (groups hand-kept in influences.json — add any new setlist.fm
-  artist there). Song pages link the cover artist and show the credit note. In archive nav, footer and search.
+- **Influences** (8 Nov, bobdylan.app format): 9 artists who influenced the band and 8 they influenced, each
+  with a sourced note and a Spotify link (data/influences.json, hand-kept). Images: Richard supplies them as
+  kit/influences/<artist-slug>.jpg|png (slug = D.slug of the name, e.g. howlin-wolf, memphis-minnie-kansas-joe-mccoy);
+  tools/import_kit.py makes site/img/influences/*.webp and data/influence-images.json. Until then each card shows
+  initials. Do not pull artist photos from Spotify or the web. Credit notes (5 songs) live in data/credits.json and
+  show on song pages only.
 
 ## Known gaps / next
 
