@@ -105,7 +105,69 @@ async function health(env) {
   } catch (e) {
     out.spotify.error = e.msg || String(e);
   }
+  out.discogs = { ok: false };
+  try {
+    const d = await discogs(env, "/database/search?q=Led+Zeppelin&type=master&per_page=1", 0);
+    out.discogs.ok = !!(d && d.results);
+    out.discogs.auth = discogsAuth(env) ? discogsAuth(env).split(" ")[1].split("=")[0] : "none";
+  } catch (e) {
+    out.discogs.error = e.msg || String(e);
+  }
   return json(out);
+}
+
+// Discogs (secret DISCOGS_TOKEN = personal access token; or DISCOGS_KEY + DISCOGS_SECRET).
+// API Terms: content shown must be < 6 hours old, so everything is fetched live and cached for 5 hours at most;
+// images are Restricted Data (display only, non-commercial). Pages show "Data provided by Discogs" with a link.
+function discogsAuth(env) {
+  const tok = env.DISCOGS_TOKEN || env.DISCOGS_USER_TOKEN || env.DISCOGS_PERSONAL_TOKEN;
+  if (tok) return "Discogs token=" + tok;
+  if (env.DISCOGS_KEY && env.DISCOGS_SECRET) return `Discogs key=${env.DISCOGS_KEY}, secret=${env.DISCOGS_SECRET}`;
+  return "";
+}
+async function discogs(env, path, ttl = 18000) {
+  const auth = discogsAuth(env);
+  if (!auth) throw { status: 503, msg: "Discogs not configured" };
+  const key = "discogs:v1:" + path;
+  if (ttl && env.LZ_CACHE) {
+    const hit = await env.LZ_CACHE.get(key, "json");
+    if (hit) return hit;
+  }
+  const r = await fetch("https://api.discogs.com" + path, { headers: { authorization: auth, "user-agent": UA, accept: "application/json" } });
+  if (!r.ok) throw { status: r.status === 404 ? 404 : 502, msg: "Discogs " + r.status };
+  const d = await r.json();
+  if (ttl && env.LZ_CACHE) await env.LZ_CACHE.put(key, JSON.stringify(d), { expirationTtl: ttl });
+  return d;
+}
+// One album, from its Discogs master: images, the original release's labels, formats and credits, and the
+// number of versions. Trimmed and cached 5 hours.
+async function discogsAlbum(env, master) {
+  const key = "discogs:album:v1:" + master;
+  if (env.LZ_CACHE) {
+    const hit = await env.LZ_CACHE.get(key, "json");
+    if (hit) return hit;
+  }
+  const m = await discogs(env, `/masters/${master}`, 0);
+  const [rel, vers] = await Promise.all([
+    m.main_release ? discogs(env, `/releases/${m.main_release}`, 0) : null,
+    discogs(env, `/masters/${master}/versions?per_page=1`, 0).catch(() => null),
+  ]);
+  const img = (x) => ({ type: x.type, uri: x.uri, uri150: x.uri150, w: x.width, h: x.height });
+  const out = {
+    master: { id: m.id, url: m.uri, title: m.title, year: m.year },
+    versions: vers && vers.pagination ? vers.pagination.items : null,
+    images: (rel && rel.images && rel.images.length ? rel.images : m.images || []).slice(0, 24).map(img),
+    release: rel && {
+      id: rel.id, url: rel.uri, country: rel.country, released: rel.released_formatted || rel.released,
+      labels: (rel.labels || []).map((l) => ({ name: l.name, catno: l.catno })),
+      formats: (rel.formats || []).map((f) => [f.qty > 1 ? f.qty + "×" : "", f.name, ...(f.descriptions || [])].filter(Boolean).join(" ")),
+      credits: (rel.extraartists || []).map((a) => ({ name: a.anv || a.name.replace(/ \(\d+\)$/, ""), role: a.role, tracks: a.tracks || "" })),
+      companies: (rel.companies || []).map((c) => ({ name: c.name.replace(/ \(\d+\)$/, ""), role: c.entity_type_name })),
+      have: rel.community && rel.community.have, want: rel.community && rel.community.want,
+    },
+  };
+  if (env.LZ_CACHE) await env.LZ_CACHE.put(key, JSON.stringify(out), { expirationTtl: 18000 });
+  return out;
 }
 
 // Spotify: app token via client credentials (secrets SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET), cached in KV.
@@ -147,6 +209,17 @@ async function spotifyTrack(env, title) {
   return out;
 }
 
+// A Led Zeppelin album on Spotify by title (builder use; results stored in data/spotify-albums.json).
+async function spotifyAlbums(env, title) {
+  const token = await spotifyToken(env);
+  const q = encodeURIComponent(`album:"${title}" artist:"Led Zeppelin"`);
+  const r = await fetch(`https://api.spotify.com/v1/search?type=album&limit=10&q=${q}`, { headers: { authorization: "Bearer " + token } });
+  if (!r.ok) throw { status: 502, msg: "Spotify search " + r.status };
+  return (((await r.json()).albums || {}).items || [])
+    .filter((a) => (a.artists || []).some((x) => x.name === "Led Zeppelin"))
+    .map((a) => ({ id: a.id, name: a.name, type: a.album_type, date: a.release_date, tracks: a.total_tracks }));
+}
+
 async function api(url, env) {
   const p = url.pathname;
   try {
@@ -160,6 +233,23 @@ async function api(url, env) {
       } catch (e) {
         return json({ id: null, error: e.msg || String(e) }, 200);
       }
+    }
+    if (p === "/api/spotify-albums") {
+      const q = (url.searchParams.get("q") || "").slice(0, 120);
+      if (!q) return json({ error: "q required" }, 400);
+      return json(await spotifyAlbums(env, q), 200, 3600);
+    }
+    // Discogs: search Led Zeppelin masters (builder use), and one album by master id (album pages).
+    if (p === "/api/discogs-search") {
+      const t = (url.searchParams.get("t") || "").slice(0, 120);
+      if (!t) return json({ error: "t required" }, 400);
+      const d = await discogs(env, `/database/search?type=master&artist=${encodeURIComponent("Led Zeppelin")}&release_title=${encodeURIComponent(t)}&per_page=10`, 3600);
+      return json((d.results || []).map((r) => ({ id: r.id, title: r.title, year: r.year, format: r.format, uri: r.uri })), 200, 600);
+    }
+    if (p === "/api/discogs") {
+      const m = (url.searchParams.get("m") || "").replace(/\D/g, "");
+      if (!m) return json({ error: "m required" }, 400);
+      return json(await discogsAlbum(env, m), 200, 3600);
     }
     // Newest shows (page 1), slimmed. Used by the home and concerts pages.
     if (p === "/api/latest") {
