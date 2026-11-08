@@ -53,7 +53,13 @@ for f in sorted((K / "influences").glob("*")):
     if f.suffix.lower() not in (".jpg", ".jpeg", ".png", ".webp"):
         continue
     im = Image.open(f).convert("RGB"); w, h = im.size; m = min(w, h)
-    im = im.crop(((w - m) // 2, (h - m) // 2, (w - m) // 2 + m, (h - m) // 2 + m)).resize((240, 240), Image.LANCZOS)
+    if max(w, h) / m > 1.25:  # group shots: keep everyone in frame on a blurred, darkened copy of the photo
+        from PIL import ImageFilter, ImageEnhance
+        bg = ImageEnhance.Brightness(im.resize((240, 240)).filter(ImageFilter.GaussianBlur(18))).enhance(0.6)
+        fg = im.copy(); fg.thumbnail((240, 240), Image.LANCZOS)
+        bg.paste(fg, ((240 - fg.width) // 2, (240 - fg.height) // 2)); im = bg
+    else:
+        im = im.crop(((w - m) // 2, (h - m) // 2, (w - m) // 2 + m, (h - m) // 2 + m)).resize((240, 240), Image.LANCZOS)
     im.save(S / "img/influences" / f"{f.stem}.webp", quality=80, method=6); faces.append(f.stem)
 (S / "data/influence-images.json").write_text(json.dumps(faces))
 # Tour photos: kit/tour/{concert,road}/*.jpg + kit/tour/captions.json (Richard's selection from the
