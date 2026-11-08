@@ -134,7 +134,10 @@ async function discogs(env, path, ttl = 18000) {
     if (hit) return hit;
   }
   const r = await fetch("https://api.discogs.com" + path, { headers: { authorization: auth, "user-agent": UA, accept: "application/json" } });
-  if (!r.ok) throw { status: r.status === 404 ? 404 : 502, msg: "Discogs " + r.status };
+  if (!r.ok) {
+    const body = (await r.text()).slice(0, 160).replace(/\s+/g, " ");
+    throw { status: r.status === 404 ? 404 : 502, msg: `Discogs ${r.status}: ${body} [ratelimit-remaining ${r.headers.get("x-discogs-ratelimit-remaining")}, server ${r.headers.get("server")}]` };
+  }
   const d = await r.json();
   if (ttl && env.LZ_CACHE) await env.LZ_CACHE.put(key, JSON.stringify(d), { expirationTtl: ttl });
   return d;
