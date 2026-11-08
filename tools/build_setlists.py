@@ -17,7 +17,7 @@ import argparse, collections, datetime, json, re, sys, time, unicodedata, urllib
 from pathlib import Path
 
 ap = argparse.ArgumentParser()
-ap.add_argument("--base", default="https://ledzeppelin.richardmcallister.workers.dev")
+ap.add_argument("--base", default="https://ledzeppelin.app")
 ap.add_argument("--max-pages", type=int, default=0)
 args = ap.parse_args()
 

@@ -32,7 +32,8 @@ map it in `LIVE_AS` in catalogue.py.
 ## Environment
 
 Single environment, straight to production (same as bobdylan.app): push to `main` → Cloudflare Workers Builds
-deploys the `ledzeppelin` Worker (~60–90 s) to ledzeppelin.richardmcallister.workers.dev. No custom domain yet.
+deploys the `ledzeppelin` Worker (~60–90 s) to https://ledzeppelin.app (www redirects to the apex; the
+workers.dev URL ledzeppelin.richardmcallister.workers.dev also stays up).
 
 Secrets on the Worker only (never in the repo or chat): `SETLISTFM_KEY`, `ANTHROPIC_API_KEY`; optional
 `SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET` switch on song players. `/health` reports each without showing it.

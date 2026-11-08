@@ -2,7 +2,7 @@
 
 Start a new chat with `richardmcallister-personal/ledzeppelin` attached. Read `CLAUDE.md` first.
 
-## State (v1, live on ledzeppelin.richardmcallister.workers.dev)
+## State (live on https://ledzeppelin.app since 8 Nov 2026; workers.dev URL still works)
 
 - Worker `ledzeppelin`: `/health` setlist.fm OK, Anthropic OK, KV bound, Spotify not configured.
 - Data built 7 Nov 2026 from setlist.fm: 536 shows (478 with setlists), 1968–2007, 20 countries, 103 songs. Includes 16 shows from Sept–Oct 1968 that setlist.fm files under The Yardbirds (PRE_NAME in build_setlists.py), from Gladsaxe, 7 Sep 1968.
@@ -26,7 +26,7 @@ Start a new chat with `richardmcallister-personal/ledzeppelin` attached. Read `C
 
 ## Known gaps / next
 
-1. Custom domain: none yet — add routes to wrangler.jsonc when Richard picks one (www redirect is already generic).
+1. Custom domain: done — ledzeppelin.app + www (custom_domain routes in wrangler.jsonc).
 2. Compilation covers added 7 Nov (box set, Remasters, Early Days, Latter Days, The Very Best of). Exact day of
    release not filled for those; add if a reliable source turns up.
 3. Gallery captions for kit/photos/* are generic (no dates/places known) — ask Richard if he has them.
