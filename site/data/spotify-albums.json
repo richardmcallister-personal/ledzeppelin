@@ -1,0 +1,94 @@
+{
+ "led-zeppelin": {
+  "id": "1J8QW9qsMLx3staWaHpQmU",
+  "name": "Led Zeppelin (Remaster)"
+ },
+ "led-zeppelin-ii": {
+  "id": "58MQ0PLijVHePUonQlK76Y",
+  "name": "Led Zeppelin II (Remaster)"
+ },
+ "led-zeppelin-iii": {
+  "id": "6P5QHz4XtxOmS5EuiGIPut",
+  "name": "Led Zeppelin III (Remaster)"
+ },
+ "led-zeppelin-iv": {
+  "id": "5EyIDBAqhnlkAHqvPRwdbX",
+  "name": "Led Zeppelin IV (Remaster)"
+ },
+ "houses-of-the-holy": {
+  "id": "0GqpoHJREPp0iuXK3HzrHk",
+  "name": "Houses of the Holy (Remaster)"
+ },
+ "physical-graffiti": {
+  "id": "4Q7cPyiP8cMIlUEHAqeYfd",
+  "name": "Physical Graffiti (Remaster)"
+ },
+ "presence": {
+  "id": "3uhD8hNpb0m3iIZ18RHH5u",
+  "name": "Presence (Remaster)"
+ },
+ "in-through-the-out-door": {
+  "id": "1W5CtQ7Ng0kP3lXyz7PIT2",
+  "name": "In Through the out Door (Remaster)"
+ },
+ "coda": {
+  "id": "228mANuRrV20jS5DCA0eER",
+  "name": "Coda (Remaster)"
+ },
+ "the-song-remains-the-same": {
+  "id": "0ui4S0TZghkf1d1Wz0oWpk",
+  "name": "The Song Remains the Same (Remaster)"
+ },
+ "how-the-west-was-won": {
+  "id": "3otvl9PN3kOgk5uwAh1CBL",
+  "name": "How the West Was Won (Remaster)"
+ },
+ "mothership": {
+  "id": "4wExFfncaUIqSgoxnqa3Eh",
+  "name": "Mothership (Remastered)"
+ },
+ "celebration-day": {
+  "id": "0kTe1sQd9yhDsdG2Zth7X6",
+  "name": "Celebration Day"
+ },
+ "led-zeppelin-deluxe": {
+  "id": "22BzOOZKYZ2jYYKLpOlnET",
+  "name": "Led Zeppelin (Deluxe Edition)"
+ },
+ "led-zeppelin-ii-deluxe": {
+  "id": "58N1RPC3B4mRkjBaug4u3X",
+  "name": "Led Zeppelin II (Deluxe Edition)"
+ },
+ "led-zeppelin-iii-deluxe": {
+  "id": "4xGEiQ7La4japmGrREeLlw",
+  "name": "Led Zeppelin III (Deluxe Edition)"
+ },
+ "led-zeppelin-iv-deluxe": {
+  "id": "44Ig8dzqOkvkGDzaUof9lK",
+  "name": "Led Zeppelin IV (Deluxe Edition)"
+ },
+ "houses-of-the-holy-deluxe": {
+  "id": "7gS8ozSkvPW3VBPLnXOZ7S",
+  "name": "Houses of the Holy (Deluxe Edition)"
+ },
+ "physical-graffiti-deluxe": {
+  "id": "26tH0kjUhkxBEd3ipGkx3Y",
+  "name": "Physical Graffiti (Deluxe Edition)"
+ },
+ "presence-deluxe": {
+  "id": "6vSiY2OVanKKforfEOT2PD",
+  "name": "Presence (Deluxe Edition)"
+ },
+ "in-through-the-out-door-deluxe": {
+  "id": "1jCYuXr0Ujke24z1ymBr5U",
+  "name": "In Through the out Door (Deluxe Edition)"
+ },
+ "coda-deluxe": {
+  "id": "56G9UnPmRifbubzPDJfAyd",
+  "name": "Coda (Deluxe Edition)"
+ },
+ "the-complete-bbc-sessions": {
+  "id": "6VH2op0GKIl3WNTbZmmcmI",
+  "name": "The Complete BBC Sessions (Remastered)"
+ }
+}

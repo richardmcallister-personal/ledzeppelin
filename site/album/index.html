@@ -37,6 +37,8 @@ D.shell("albums");
     D.get("/data/album_notes.json").catch(() => ({})),
     D.get("/data/songs.json").catch(() => []),
   ]);
+  const sp = await D.get("/data/spotify-albums.json").catch(() => ({}));
+  const main = sp[a.s] || a.ed.map((e) => sp[e.s]).find(Boolean);
   const n = notes[slug] || {};
   const live = Object.fromEntries(songs.map((s) => [s.s, s]));
   const list = (xs) => (xs || []).filter(Boolean).map(D.esc).join(", ");
@@ -91,7 +93,8 @@ D.shell("albums");
       <span class="tag">${a.c.map((c) => D.CAT[c]).join(", ")} · ${a.y}</span>
       <h1>${D.esc(a.t)}</h1>
       <p class="lede">${D.esc(n.about || a.note)}</p>
-      <div class="btns">${D.spotify(a)}<a class="btn" href="${discogs}" target="_blank" rel="noopener">Sleeves and pressings on Discogs</a></div>
+      <div class="btns">${main ? `<a class="btn pri" href="https://open.spotify.com/album/${main.id}" target="_blank" rel="noopener">Open in Spotify</a>` : D.spotify(a)}<a class="btn" href="${discogs}" target="_blank" rel="noopener">Sleeves and pressings on Discogs</a></div>
+      ${main ? D.player("album", main.id, main.name) : ""}
     </div>
   </section>
 
@@ -100,6 +103,7 @@ D.shell("albums");
       ${facts.length ? `<section class="sheet"><h2>The record</h2><dl class="facts">${facts.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl></section>` : ""}
       <section class="sheet"><h2>The artwork</h2>${n.cover ? `<p>${D.esc(n.cover)}</p>` : ""}
         ${art.length > 1 ? `<div class="edgrid">${art.map((e) => `<figure><a href="/covers/${e.s}.webp" target="_blank" rel="noopener"><img src="/covers/${e.s}.webp" alt="${D.esc(a.t + ", " + e.t)} cover" width="120" height="120" loading="lazy"></a>${D.esc(e.t)}, ${e.y}</figure>`).join("")}</div>` : ""}
+        ${a.ed.filter((e) => sp[e.s] && (!sp[a.s] || sp[e.s].id !== main.id)).map((e) => D.player("album", sp[e.s].id, sp[e.s].name)).join("")}
         <p class="small muted" style="margin:12px 0 0">Back covers, inner sleeves and labels for every pressing are on <a href="${discogs}" target="_blank" rel="noopener">Discogs</a>.</p></section>
       ${n.influence && n.influence.length ? `<section class="sheet"><h2>Influence and afterlife</h2><ul class="infl">${n.influence.map((x) => `<li>${D.esc(x)}</li>`).join("")}</ul></section>` : ""}
       ${charts.length ? `<section class="sheet"><h2>Where it charted</h2><ul class="rows">${charts.map((c) => `<li><div class="r"><b>${D.esc(c.chart)}</b><span class="muted small">${c.year || ""}</span><span class="end big num">${D.esc(c.peak)}</span></div></li>`).join("")}</ul>

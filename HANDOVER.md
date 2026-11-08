@@ -59,3 +59,13 @@ Tracks (live counts + a Lyrics link to Musixmatch; never lyric text), Who played
 tools/build_albums.py. Home hero has the gold record emblem (bobdylan.app's position) and a scrolling album carousel
 linking to the album pages; the cover wall and all /albums/?a= links now go to /album/.
 Inner sleeves: not in the kit — linked to Discogs; add files to kit/releases if Richard supplies them.
+
+## Spotify and Discogs (8 Nov)
+
+Spotify keys are on the Worker. Song pages get a track player (/api/spotify); album pages get the album player
+(data/spotify-albums.json: 13 albums + 10 deluxe/complete editions, mapped by tools via /api/spotify-albums).
+Players are tap-to-load facades (D.player). Not on Spotify: the DVD, box set, Remasters, Early/Latter Days, Very Best of, Live E.P.
+
+Discogs token is on the Worker and the routes exist (/api/discogs-search, /api/discogs?m=), but api.discogs.com
+answers every Worker request with 429 "ratelimit-remaining 0": Discogs limits by source IP and Workers share
+Cloudflare egress IPs. Requests from other IPs work. Album pages still link to Discogs until this is solved.

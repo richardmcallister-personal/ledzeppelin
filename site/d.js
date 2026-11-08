@@ -50,7 +50,7 @@
   D.player = (kind, id, label) =>
     `<div class="player ${kind}" data-kind="${kind}" data-id="${id}"><button type="button" class="play" aria-label="Load Spotify player: ${D.esc(label)}">` +
     `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="currentColor"/><path d="M9.5 7.5v9l7-4.5z" fill="var(--paper)"/></svg>` +
-    `<span><b>Play the song</b><small>${D.esc(label)} · loads Spotify's player</small></span></button></div>`;
+    `<span><b>Play ${kind === "album" ? "the album" : "the song"}</b><small>${D.esc(label)} · loads Spotify's player</small></span></button></div>`;
   document.addEventListener("click", (e) => {
     const b = e.target.closest(".player .play");
     if (!b) return;
