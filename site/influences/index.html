@@ -32,7 +32,7 @@ D.shell("influences");
   const face = (a) => {
     const k = D.slug(a.name);
     if (has.has(k)) return `<img src="/img/influences/${k}.webp" alt="" width="116" height="116" loading="lazy" decoding="async">`;
-    const ini = a.name.replace(/['’]/g, "").split(/[\s&]+/).filter((w) => /^[A-Z]/.test(w)).slice(0, 2).map((w) => w[0]).join("");
+    const ini = a.name.replace(/^The /, "").replace(/['’]/g, "").split(/[\s&]+/).filter((w) => /^[A-Z]/.test(w)).slice(0, 2).map((w) => w[0]).join("");
     return `<span class="ph">${ini}</span>`;
   };
   const groups = [["roots", "Artists who influenced Led Zeppelin"], ["legacy", "Artists Led Zeppelin influenced"]];
