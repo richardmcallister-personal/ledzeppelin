@@ -5,7 +5,7 @@ Start a new chat with `richardmcallister-personal/ledzeppelin` attached. Read `C
 ## State (v1, live on ledzeppelin.richardmcallister.workers.dev)
 
 - Worker `ledzeppelin`: `/health` setlist.fm OK, Anthropic OK, KV bound, Spotify not configured.
-- Data built 7 Nov 2026 from setlist.fm: 520 shows (477 with setlists), 1968–2007, 19 countries, 103 songs.
+- Data built 7 Nov 2026 from setlist.fm: 536 shows (478 with setlists), 1968–2007, 20 countries, 103 songs. Includes 16 shows from Sept–Oct 1968 that setlist.fm files under The Yardbirds (PRE_NAME in build_setlists.py), from Gladsaxe, 7 Sep 1968.
 - **Home:** hero with counts and cover strip; the last show (O2, 10 Dec 2007, setlist live); shows-per-year bars;
   Dazed and Confused feature; On this day; top 10 most played; journeys; the four members with their symbols;
   gallery feature.

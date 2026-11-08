@@ -59,6 +59,32 @@ for p in range(2, pages + 1):
     if p % 20 == 0:
         print(f"  {p}/{pages} pages, {len(shows)} shows", flush=True)
 
+# Shows before the name change. setlist.fm files these under The Yardbirds, so the artist query above
+# misses them. Same four musicians; billed as the New Yardbirds (Scandinavia) or the Yardbirds (England).
+# 15 Oct 1968 University of Surrey (43e9a33f) is left out: it looks like a duplicate of 25 Oct 1968.
+PRE_NAME = {
+    "Scandinavian tour 1968, as the New Yardbirds": [
+        "23de5463", "33de5461", "2bde546a", "b90e106", "3bde546c", "33de5475",
+        "2bde5476", "23de5477", "73de8219", "53e9a345", "53e9a339", "5be9a338"],
+    "English dates 1968, as the Yardbirds": ["3bde547c", "43e9a337", "33de547d", "2bde547e"],
+}
+for tour, ids in PRE_NAME.items():
+    for sid in ids:
+        time.sleep(0.7)
+        for attempt in range(4):
+            try:
+                req = urllib.request.Request(f"{args.base}/api/setlist?id={sid}", headers={"user-agent": UA})
+                with urllib.request.urlopen(req, timeout=60) as r:
+                    s = json.load(r)
+                break
+            except Exception as e:
+                print(f"  {sid}: {e}", file=sys.stderr); time.sleep(3 * (attempt + 1))
+        else:
+            raise SystemExit(f"setlist {sid} failed")
+        s["t"] = tour
+        shows[s["id"]] = s
+print(f"{sum(len(v) for v in PRE_NAME.values())} pre-name shows added")
+
 today = datetime.date.today().isoformat()
 all_shows = sorted(shows.values(), key=lambda s: (s["d"], s["id"]))
 past = [s for s in all_shows if s["d"] < today or any(x["s"] for x in s["sets"])]
