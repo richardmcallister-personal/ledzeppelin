@@ -100,7 +100,7 @@ D.shell("albums");
       ["Versions", dg.versions ? `${dg.versions} pressings and editions` : ""],
       ["Collectors", rel.have ? `${rel.have} own it · ${rel.want} want it` : ""],
     ].filter(([, v]) => v);
-    dgSections = `${pics.length ? `<section class="sheet"><h2>Sleeves and labels</h2><div class="dgpics">${pics.map((x, k) => `<button type="button" data-big="${D.esc(x.uri)}" aria-label="Enlarge image ${k + 1}"><img src="${D.esc(x.uri150 || x.uri)}" alt="${D.esc(a.t)}, ${D.esc(x.type || "image")} ${k + 1}" loading="lazy" referrerpolicy="no-referrer"></button>`).join("")}</div>
+    dgSections = `${pics.length ? `<section class="sheet"><h2>Sleeves and labels</h2><div class="dgpics">${pics.map((x, k) => `<button type="button" data-big="${D.esc(x.uri)}" aria-label="Enlarge image ${k + 1}"><img src="${D.esc(x.uri || x.uri150)}" alt="${D.esc(a.t)}, ${D.esc(x.type || "image")} ${k + 1}" loading="lazy" referrerpolicy="no-referrer"></button>`).join("")}</div>
       <p class="small muted" style="margin:10px 0 0">Front, back, inner sleeves and labels of the first release, as photographed by Discogs users.</p>${credit}</section>` : ""}
       ${facts.length ? `<section class="sheet"><h2>The first pressing</h2><dl class="facts">${facts.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl>${credit}</section>` : ""}`;
     const cr = (rel.credits || []).concat((rel.companies || []).map((c) => ({ name: c.name, role: c.role })));
