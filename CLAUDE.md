@@ -17,7 +17,8 @@ site/assets/          logo, member symbols (alpha masks), app icons; manifest.we
 site/fonts/           self-hosted Anton (big figures); text is the system font stack
 worker.js             serves site/, proxies setlist.fm with a KV cache, /api/spotify, /health, www → apex
 wrangler.jsonc        Worker `ledzeppelin`, KV LZ_CACHE
-tools/import_kit.py   kit/ → covers, img, logo, symbols, influence images (kit/influences/<artist-slug>.jpg)
+tools/import_kit.py   kit/ → covers, img, logo, symbols, influence images (kit/influences/<artist-slug>.jpg),
+                      tour photos (kit/tour/ + captions.json → img/tour, data/tour-photos.json)
 tools/catalogue.py    hand-kept album list, track lists, editions → data/albums.json (edit here, not the JSON)
 tools/build_setlists.py   setlist.fm (via the Worker) → data/index, years/, songs, song/, otd
 ```

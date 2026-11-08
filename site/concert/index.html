@@ -31,7 +31,8 @@ D.shell("concerts");
     return;
   }
   document.title = `${s.v}, ${D.date(s.d)} · Led Zeppelin`;
-  const songs = await D.get("/data/songs.json");
+  const [songs, tour] = await Promise.all([D.get("/data/songs.json"), D.get("/data/tour-photos.json").catch(() => [])]);
+  const pics = tour.filter((p) => p.d === s.d);
   const known = Object.fromEntries(songs.map((x) => [x.s, x]));
   const total = s.sets.reduce((t, x) => t + x.s.length, 0);
   let n = 0;
@@ -46,7 +47,9 @@ D.shell("concerts");
   }).join("");
   M.innerHTML = `<div class="head"><span class="tag">${D.date(s.d, true)}</span>
       <h1 style="margin-top:8px">${D.esc(s.v)}</h1>
-      <p>${D.esc(D.place(s))}${s.t ? " · " + D.esc(s.t) : ""}</p></div>
+      <p>${D.esc(D.place(s))}${s.t ? " · " + D.esc(s.t) : ""}</p>
+      ${s.d < "1968-10-25" ? `<p class="small muted">Played before the name Led Zeppelin was used, billed as ${s.d < "1968-10-01" ? "the New Yardbirds" : "the Yardbirds"}. setlist.fm lists this show under <a href="${s.u}" rel="noopener">The Yardbirds</a>.</p>` : ""}</div>
+    ${pics.length ? `<section class="sheet"><h2>Photos from this day</h2><div class="gal">${pics.map((p) => `<figure><a href="/img/tour/${p.s}.webp" target="_blank" rel="noopener"><img src="/img/tour/${p.s}-s.webp" alt="${D.esc(p.t)}" loading="lazy"></a><figcaption>${D.esc(p.t.replace(/\.$/, ""))}<small><a href="${p.src}" target="_blank" rel="noopener">ledzeppelin.com archive</a></small></figcaption></figure>`).join("")}</div></section>` : ""}
     <section class="sheet">
       <h2>Setlist <span class="muted small" style="font-family:var(--body);font-weight:400">${total ? total + " songs" : ""}</span></h2>
       ${sets || `<p class="empty">No setlist on record for this show${s.d >= D.today() ? " yet" : ""}.</p>`}

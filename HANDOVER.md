@@ -20,8 +20,8 @@ Start a new chat with `richardmcallister-personal/ledzeppelin` attached. Read `C
 - **Influences** (8 Nov, bobdylan.app format): 9 artists who influenced the band and 8 they influenced, each
   with a sourced note and a Spotify link (data/influences.json, hand-kept). Images: Richard supplies them as
   kit/influences/<artist-slug>.jpg|png (slug = D.slug of the name, e.g. howlin-wolf, memphis-minnie-kansas-joe-mccoy);
-  tools/import_kit.py makes site/img/influences/*.webp and data/influence-images.json. Until then each card shows
-  initials. Do not pull artist photos from Spotify or the web. Credit notes (5 songs) live in data/credits.json and
+  tools/import_kit.py makes site/img/influences/*.webp and data/influence-images.json. All 17 supplied 8 Nov (from
+  Richard's Codex outputs folder); a card without a file shows initials. Do not pull artist photos from Spotify or the web. Credit notes (5 songs) live in data/credits.json and
   show on song pages only.
 
 ## Known gaps / next
@@ -42,3 +42,10 @@ python3 tools/build_setlists.py      # ~30 s, 26 pages through the Worker
 python3 tools/catalogue.py           # after editing album data
 python3 tools/import_kit.py          # after adding files to kit/
 ```
+
+## Tour photos (8 Nov)
+
+52 photos Richard selected from the ledzeppelin.com image archive (kit/tour/{concert,road} + captions.json with
+caption, date, archive link). import_kit.py → site/img/tour/ and data/tour-photos.json. Shown on /gallery/ (chips:
+In concert · On the road · Archive) and on any /concert/ page whose date matches (42 do). Captions say
+"publication rights are unverified": each photo links back to its archive entry; ask Richard before wider use.

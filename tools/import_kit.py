@@ -56,4 +56,16 @@ for f in sorted((K / "influences").glob("*")):
     im = im.crop(((w - m) // 2, (h - m) // 2, (w - m) // 2 + m, (h - m) // 2 + m)).resize((240, 240), Image.LANCZOS)
     im.save(S / "img/influences" / f"{f.stem}.webp", quality=80, method=6); faces.append(f.stem)
 (S / "data/influence-images.json").write_text(json.dumps(faces))
-print(len(COVERS), "covers,", len(PHOTOS), "photos,", len(faces), "influence images")
+# Tour photos: kit/tour/{concert,road}/*.jpg + kit/tour/captions.json (Richard's selection from the
+# ledzeppelin.com image archive) → site/img/tour/<stem>.webp (1200 + 480) and data/tour-photos.json
+(S / "img/tour").mkdir(parents=True, exist_ok=True)
+tour = []
+for c in json.loads((K / "tour/captions.json").read_text()):
+    f = K / "tour" / c["file"]; stem = f.stem
+    im = Image.open(f).convert("RGB"); w, h = im.size
+    for px, suf in ((1200, ""), (480, "-s")):
+        x = im.copy(); x.thumbnail((px, px), Image.LANCZOS); x.save(S / "img/tour" / f"{stem}{suf}.webp", quality=78, method=6)
+    tour.append({"s": stem, "t": c["caption"], "d": c["date"], "k": c["type"], "src": c["source"], "w": w, "h": h})
+tour.sort(key=lambda x: (x["d"], x["s"]))
+(S / "data/tour-photos.json").write_text(json.dumps(tour, ensure_ascii=False, indent=1))
+print(len(COVERS), "covers,", len(PHOTOS), "photos,", len(faces), "influence images,", len(tour), "tour photos")
