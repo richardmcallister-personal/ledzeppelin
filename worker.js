@@ -3,6 +3,9 @@
 // KV: LZ_CACHE.
 
 const MBID = "678d88b2-87b0-403b-b63d-5da7465aecc3"; // Led Zeppelin on MusicBrainz / setlist.fm
+// Wikipedia articles the album builder may read (tools/build_albums.py). Allow-listed so this is not an open proxy.
+import WIKI_TITLES from "./tools/wiki_titles.json";
+const WIKI_OK = new Set(Object.values(WIKI_TITLES).filter(Boolean));
 const SFM = "https://api.setlist.fm/rest/1.0";
 const UA = "ledzeppelin-fansite/1.0 (+https://github.com/richardmcallister-personal/ledzeppelin)";
 
@@ -162,6 +165,24 @@ async function api(url, env) {
     if (p === "/api/latest") {
       const d = await sfm(env, `/artist/${MBID}/setlists?p=1`, 1800);
       return json({ total: d.total, shows: (d.setlist || []).map(slim) }, 200, 600);
+    }
+    // Wikipedia wikitext for an allow-listed album article (builder use only). Cached 7 days.
+    if (p === "/api/wiki") {
+      const t = url.searchParams.get("t") || "";
+      if (!WIKI_OK.has(t)) return json({ error: "title not allowed" }, 403);
+      const key = "wiki:v1:" + t;
+      if (env.LZ_CACHE) {
+        const hit = await env.LZ_CACHE.get(key, "json");
+        if (hit) return json(hit, 200, 3600);
+      }
+      const api = `https://en.wikipedia.org/w/api.php?action=parse&format=json&formatversion=2&redirects=1&prop=wikitext|revid&page=${encodeURIComponent(t)}`;
+      const r = await fetch(api, { headers: { "user-agent": UA + " album-builder", "api-user-agent": UA } });
+      if (!r.ok) return json({ error: "wikipedia " + r.status }, 502);
+      const d = await r.json();
+      if (!d.parse) return json({ error: (d.error && d.error.info) || "not found" }, 404);
+      const out = { title: d.parse.title, revid: d.parse.revid, wikitext: d.parse.wikitext };
+      if (env.LZ_CACHE) await env.LZ_CACHE.put(key, JSON.stringify(out), { expirationTtl: 86400 * 7 });
+      return json(out, 200, 3600);
     }
     // One page of the full history, slimmed. Used by tools/build_setlists.py.
     if (p === "/api/setlists") {
