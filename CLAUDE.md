@@ -41,6 +41,9 @@ Secrets on the Worker only (never in the repo or chat): `SETLISTFM_KEY`, `ANTHRO
 `SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET` switch on song players. `/health` reports each without showing it.
 KV `LZ_CACHE` = namespace `ledzeppelin-cache`, id 48acfb106e344cdd8cbb0e5f51c9b65c.
 
+Discogs data arrives from Richard's Mac (tools/discogs-mac/, launchd every 5 h) via POST `/api/discogs-ingest`
+and lives in KV for 5.5 h only (Discogs API Terms: nothing older than 6 h); see HANDOVER.md.
+
 Worker routes: `/api/latest`, `/api/setlists?p=N` (builder), `/api/setlist?id=` (one show, 7 days),
 `/api/spotify?q=`. setlist.fm MBID 678d88b2-87b0-403b-b63d-5da7465aecc3. setlist.fm's API is free for
 non-commercial use only: no ads, no paid features.

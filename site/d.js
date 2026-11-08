@@ -116,6 +116,7 @@
         <div class="fnotes">
           <p>This is a fan site, not connected with Led Zeppelin, its members, management or record label. For the official site and news, go to <a href="https://www.ledzeppelin.com/" rel="noopener">ledzeppelin.com</a>.</p>
           <p>Setlists from <a href="https://www.setlist.fm/setlists/led-zeppelin-bd6bd12.html" rel="noopener">setlist.fm</a>, compiled by its users. Album artwork and photographs © the respective rights holders, shown to identify each record and moment.</p>
+          <p>This application uses Discogs’ API but is not affiliated with, sponsored or endorsed by Discogs. ‘Discogs’ is a trademark of Zink Media, LLC.</p>
           <div class="theme" role="group" aria-label="Theme"><span>Theme</span><button type="button" data-t="auto">Auto</button><button type="button" data-t="light">Light</button><button type="button" data-t="dark">Dark</button></div>
         </div>
       </footer>`

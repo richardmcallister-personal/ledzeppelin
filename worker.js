@@ -6,6 +6,10 @@ const MBID = "678d88b2-87b0-403b-b63d-5da7465aecc3"; // Led Zeppelin on MusicBra
 // Wikipedia articles the album builder may read (tools/build_albums.py). Allow-listed so this is not an open proxy.
 import WIKI_TITLES from "./tools/wiki_titles.json";
 const WIKI_OK = new Set(Object.values(WIKI_TITLES).filter(Boolean));
+// Discogs master + main release per album. Data is fetched by Richard's Mac (tools/discogs-mac/), because
+// Discogs throttles Cloudflare's shared egress IPs, and pushed to /api/discogs-ingest.
+import DISCOGS_IDS from "./tools/discogs_ids.json";
+const DG_TTL = 19800; // 5.5 hours: Discogs API Terms forbid showing data more than 6 hours old
 const SFM = "https://api.setlist.fm/rest/1.0";
 const UA = "ledzeppelin-fansite/1.0 (+https://github.com/richardmcallister-personal/ledzeppelin)";
 
@@ -105,13 +109,12 @@ async function health(env) {
   } catch (e) {
     out.spotify.error = e.msg || String(e);
   }
-  out.discogs = { ok: false };
-  try {
-    const d = await discogs(env, "/database/search?q=Led+Zeppelin&type=master&per_page=1", 0);
-    out.discogs.ok = !!(d && d.results);
-    out.discogs.auth = discogsAuth(env) ? discogsAuth(env).split(" ")[1].split("=")[0] : "none";
-  } catch (e) {
-    out.discogs.error = e.msg || String(e);
+  out.discogs = { token: !!discogsAuth(env) };
+  if (env.LZ_CACHE) {
+    const last = await env.LZ_CACHE.get("dg:last", "json");
+    out.discogs.lastPush = last ? new Date(last.at).toISOString() : null;
+    out.discogs.fresh = !!(last && Date.now() - last.at < DG_TTL * 1000);
+    if (last) out.discogs.items = last.n;
   }
   return json(out);
 }
@@ -142,35 +145,34 @@ async function discogs(env, path, ttl = 18000) {
   if (ttl && env.LZ_CACHE) await env.LZ_CACHE.put(key, JSON.stringify(d), { expirationTtl: ttl });
   return d;
 }
-// One album, from its Discogs master: images, the original release's labels, formats and credits, and the
-// number of versions. Trimmed and cached 5 hours.
+// One album, assembled from what the Mac pushed (KV, expires after DG_TTL). {stale:true} when nothing is fresh.
 async function discogsAlbum(env, master) {
-  const key = "discogs:album:v1:" + master;
-  if (env.LZ_CACHE) {
-    const hit = await env.LZ_CACHE.get(key, "json");
-    if (hit) return hit;
-  }
-  const m = await discogs(env, `/masters/${master}`, 0);
-  const [rel, vers] = await Promise.all([
-    m.main_release ? discogs(env, `/releases/${m.main_release}`, 0) : null,
-    discogs(env, `/masters/${master}/versions?per_page=1`, 0).catch(() => null),
+  const ids = Object.values(DISCOGS_IDS).find((x) => String(x.m) === String(master));
+  if (!ids || !env.LZ_CACHE) return { stale: true };
+  const [m, rel, ver] = await Promise.all([
+    env.LZ_CACHE.get("dg:master:" + ids.m, "json"),
+    env.LZ_CACHE.get("dg:release:" + ids.r, "json"),
+    env.LZ_CACHE.get("dg:versions:" + ids.m, "json"),
   ]);
+  if (!m && !rel) return { stale: true };
+  return { master: m, release: rel, versions: ver && ver.n, fetched: Math.min(...[m, rel].filter(Boolean).map((x) => x.at)) };
+}
+// Trim what the Mac sends to the fields the album pages use.
+function dgTrim(kind, d) {
   const img = (x) => ({ type: x.type, uri: x.uri, uri150: x.uri150, w: x.width, h: x.height });
-  const out = {
-    master: { id: m.id, url: m.uri, title: m.title, year: m.year },
-    versions: vers && vers.pagination ? vers.pagination.items : null,
-    images: (rel && rel.images && rel.images.length ? rel.images : m.images || []).slice(0, 24).map(img),
-    release: rel && {
-      id: rel.id, url: rel.uri, country: rel.country, released: rel.released_formatted || rel.released,
-      labels: (rel.labels || []).map((l) => ({ name: l.name, catno: l.catno })),
-      formats: (rel.formats || []).map((f) => [f.qty > 1 ? f.qty + "×" : "", f.name, ...(f.descriptions || [])].filter(Boolean).join(" ")),
-      credits: (rel.extraartists || []).map((a) => ({ name: a.anv || a.name.replace(/ \(\d+\)$/, ""), role: a.role, tracks: a.tracks || "" })),
-      companies: (rel.companies || []).map((c) => ({ name: c.name.replace(/ \(\d+\)$/, ""), role: c.entity_type_name })),
-      have: rel.community && rel.community.have, want: rel.community && rel.community.want,
-    },
+  const name = (n) => (n || "").replace(/ \(\d+\)$/, "").replace(/\*$/, "");
+  const at = Date.now();
+  if (kind === "master") return { at, id: d.id, url: d.uri, title: d.title, year: d.year, images: (d.images || []).slice(0, 30).map(img) };
+  if (kind === "versions") return { at, n: d.pagination ? d.pagination.items : null };
+  return {
+    at, id: d.id, url: d.uri, country: d.country, released: d.released_formatted || d.released,
+    images: (d.images || []).slice(0, 30).map(img),
+    labels: (d.labels || []).map((l) => ({ name: name(l.name), catno: l.catno })),
+    formats: (d.formats || []).map((f) => [f.qty > 1 ? f.qty + "×" : "", f.name, ...(f.descriptions || [])].filter(Boolean).join(" ")),
+    credits: (d.extraartists || []).slice(0, 80).map((a) => ({ name: name(a.anv || a.name), role: a.role, tracks: a.tracks || "" })),
+    companies: (d.companies || []).slice(0, 30).map((c) => ({ name: name(c.name), role: c.entity_type_name })),
+    have: d.community && d.community.have, want: d.community && d.community.want,
   };
-  if (env.LZ_CACHE) await env.LZ_CACHE.put(key, JSON.stringify(out), { expirationTtl: 18000 });
-  return out;
 }
 
 // Spotify: app token via client credentials (secrets SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET), cached in KV.
@@ -242,17 +244,15 @@ async function api(url, env) {
       if (!q) return json({ error: "q required" }, 400);
       return json(await spotifyAlbums(env, q), 200, 3600);
     }
-    // Discogs: search Led Zeppelin masters (builder use), and one album by master id (album pages).
-    if (p === "/api/discogs-search") {
-      const t = (url.searchParams.get("t") || "").slice(0, 120);
-      if (!t) return json({ error: "t required" }, 400);
-      const d = await discogs(env, `/database/search?type=master&artist=${encodeURIComponent("Led Zeppelin")}&release_title=${encodeURIComponent(t)}&per_page=10`, 3600);
-      return json((d.results || []).map((r) => ({ id: r.id, title: r.title, year: r.year, format: r.format, uri: r.uri })), 200, 600);
+    // Discogs: the Mac's to-do list (plain text: slug master release).
+    if (p === "/api/discogs-plan") {
+      const body = Object.entries(DISCOGS_IDS).map(([k, v]) => `${k} ${v.m} ${v.r}`).join("\n") + "\n";
+      return new Response(body, { headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" } });
     }
     if (p === "/api/discogs") {
-      const m = (url.searchParams.get("m") || "").replace(/\D/g, "");
-      if (!m) return json({ error: "m required" }, 400);
-      return json(await discogsAlbum(env, m), 200, 3600);
+      const ids = DISCOGS_IDS[(url.searchParams.get("a") || "").replace(/[^a-z0-9-]/g, "")];
+      if (!ids) return json({ stale: true }, 200);
+      return json(await discogsAlbum(env, ids.m), 200, 300);
     }
     // Newest shows (page 1), slimmed. Used by the home and concerts pages.
     if (p === "/api/latest") {
@@ -297,6 +297,31 @@ async function api(url, env) {
   }
 }
 
+// POST /api/discogs-ingest?kind=master|release|versions&id=N — body is the raw Discogs JSON.
+// Authorised by sending the same Discogs token the Worker holds (header x-ingest-token).
+async function discogsIngest(request, url, env) {
+  if (request.method !== "POST") return json({ error: "POST only" }, 405);
+  const tok = env.DISCOGS_TOKEN || env.DISCOGS_USER_TOKEN || env.DISCOGS_PERSONAL_TOKEN || "";
+  const got = request.headers.get("x-ingest-token") || "";
+  const a = new TextEncoder().encode(tok), b = new TextEncoder().encode(got);
+  let same = tok.length > 0 && a.length === b.length;
+  for (let i = 0; i < a.length && same; i++) same = a[i] === b[i];
+  if (!same) return json({ error: "not authorised" }, 401);
+  const kind = url.searchParams.get("kind");
+  const id = (url.searchParams.get("id") || "").replace(/\D/g, "");
+  if (!["master", "release", "versions"].includes(kind) || !id) return json({ error: "bad kind or id" }, 400);
+  const known = Object.values(DISCOGS_IDS).some((x) => String(kind === "release" ? x.r : x.m) === id);
+  if (!known) return json({ error: "id not in the album list" }, 400);
+  const text = await request.text();
+  if (text.length > 3_000_000) return json({ error: "too large" }, 413);
+  let d;
+  try { d = JSON.parse(text); } catch { return json({ error: "not JSON" }, 400); }
+  await env.LZ_CACHE.put(`dg:${kind}:${id}`, JSON.stringify(dgTrim(kind, d)), { expirationTtl: DG_TTL });
+  const last = (await env.LZ_CACHE.get("dg:last", "json")) || { n: 0 };
+  await env.LZ_CACHE.put("dg:last", JSON.stringify({ at: Date.now(), n: (Date.now() - (last.at || 0) < 3600e3 ? last.n : 0) + 1 }), { expirationTtl: 86400 * 30 });
+  return json({ ok: true, kind, id });
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -304,6 +329,7 @@ export default {
       url.hostname = url.hostname.slice(4);
       return Response.redirect(url.toString(), 301);
     }
+    if (url.pathname === "/api/discogs-ingest") return discogsIngest(request, url, env);
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
     if (url.pathname === "/health") return health(env);
     if (url.pathname.startsWith("/api/")) return api(url, env);

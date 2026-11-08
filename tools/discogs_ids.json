@@ -1,0 +1,86 @@
+{
+ "led-zeppelin": {
+  "m": 4126,
+  "r": 1218217
+ },
+ "led-zeppelin-ii": {
+  "m": 4170,
+  "r": 1846223
+ },
+ "led-zeppelin-iii": {
+  "m": 4199,
+  "r": 2019920
+ },
+ "led-zeppelin-iv": {
+  "m": 4300,
+  "r": 2893139
+ },
+ "houses-of-the-holy": {
+  "m": 4326,
+  "r": 455077
+ },
+ "physical-graffiti": {
+  "m": 4392,
+  "r": 458939
+ },
+ "presence": {
+  "m": 4450,
+  "r": 5206169
+ },
+ "in-through-the-out-door": {
+  "m": 4474,
+  "r": 4911478
+ },
+ "coda": {
+  "m": 4498,
+  "r": 416923
+ },
+ "the-song-remains-the-same": {
+  "m": 5107,
+  "r": 412475
+ },
+ "bbc-sessions": {
+  "m": 4529,
+  "r": 1779155
+ },
+ "how-the-west-was-won": {
+  "m": 115931,
+  "r": 1794547
+ },
+ "led-zeppelin-dvd": {
+  "m": 4751,
+  "r": 1175599
+ },
+ "led-zeppelin-box-set": {
+  "m": 66072,
+  "r": 982497
+ },
+ "remasters": {
+  "m": 5005,
+  "r": 1122905
+ },
+ "early-days": {
+  "m": 4683,
+  "r": 2539972
+ },
+ "latter-days": {
+  "m": 4728,
+  "r": 609934
+ },
+ "the-very-best-of-led-zeppelin": {
+  "m": 4672,
+  "r": 575253
+ },
+ "mothership": {
+  "m": 4787,
+  "r": 1133767
+ },
+ "celebration-day": {
+  "m": 493246,
+  "r": 4044555
+ },
+ "live-ep": {
+  "m": 3969950,
+  "r": 35069771
+ }
+}

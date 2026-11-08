@@ -66,6 +66,13 @@ Spotify keys are on the Worker. Song pages get a track player (/api/spotify); al
 (data/spotify-albums.json: 13 albums + 10 deluxe/complete editions, mapped by tools via /api/spotify-albums).
 Players are tap-to-load facades (D.player). Not on Spotify: the DVD, box set, Remasters, Early/Latter Days, Very Best of, Live E.P.
 
-Discogs token is on the Worker and the routes exist (/api/discogs-search, /api/discogs?m=), but api.discogs.com
-answers every Worker request with 429 "ratelimit-remaining 0": Discogs limits by source IP and Workers share
-Cloudflare egress IPs. Requests from other IPs work. Album pages still link to Discogs until this is solved.
+Discogs (option A, chosen 8 Nov): api.discogs.com throttles Cloudflare's shared egress IPs (429, ratelimit-remaining 0
+even with the token), so the Worker never calls Discogs. Richard's Mac does: tools/discogs-mac/install.sh (run once in
+Terminal) stores the token in ~/.config/ledzeppelin-discogs/token (chmod 600) and a launchd job (app.ledzeppelin.discogs)
+runs refresh.sh every 5 hours: for each album in /api/discogs-plan it fetches master, versions and main release and POSTs
+them to /api/discogs-ingest (header x-ingest-token = the same Discogs token as the Worker's DISCOGS_TOKEN secret).
+The Worker trims and keeps each item in KV for 5.5 hours (DG_TTL) — Discogs API Terms forbid showing data more than
+6 hours old. Album pages read /api/discogs?a=<slug>: Sleeves and labels gallery, The first pressing, Full sleeve credits,
+each with "Data provided by Discogs" linked to the release; the footer carries Discogs' required non-affiliation notice.
+If the Mac is off, data expires and pages fall back to the Discogs links. /health shows discogs.lastPush and fresh.
+Master/release IDs: tools/discogs_ids.json. Log on the Mac: ~/Library/Logs/ledzeppelin-discogs.log. Remove: uninstall.sh.

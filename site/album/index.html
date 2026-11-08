@@ -37,7 +37,7 @@ D.shell("albums");
     D.get("/data/album_notes.json").catch(() => ({})),
     D.get("/data/songs.json").catch(() => []),
   ]);
-  const sp = await D.get("/data/spotify-albums.json").catch(() => ({}));
+  const [sp, dg] = await Promise.all([D.get("/data/spotify-albums.json").catch(() => ({})), D.get(`/api/discogs?a=${slug}`).catch(() => ({ stale: true }))]);
   const main = sp[a.s] || a.ed.map((e) => sp[e.s]).find(Boolean);
   const n = notes[slug] || {};
   const live = Object.fromEntries(songs.map((s) => [s.s, s]));
@@ -86,6 +86,27 @@ D.shell("albums");
   const art = [{ s: a.s, t: "Original release", y: a.y }, ...a.ed];
   const prev = albums[i - 1], next = albums[i + 1];
 
+  // Discogs (pushed from Richard's Mac, never older than 5.5 hours). Attribution required by the Discogs API Terms.
+  let dgSections = "", dgCredits = "";
+  if (dg && !dg.stale) {
+    const rel = dg.release || {}, mas = dg.master || {};
+    const link = rel.url || mas.url;
+    const credit = `<p class="small muted dgsrc">Data provided by <a href="${link}" target="_blank" rel="noopener">Discogs</a>.</p>`;
+    const pics = (rel.images && rel.images.length ? rel.images : mas.images || []).filter((x) => x.uri);
+    const facts = [
+      ["First release", [rel.released, rel.country].filter(Boolean).map(D.esc).join(" · ")],
+      ["Label", (rel.labels || []).slice(0, 3).map((l) => `${D.esc(l.name)}${l.catno && l.catno !== "none" ? " · " + D.esc(l.catno) : ""}`).join("<br>")],
+      ["Format", (rel.formats || []).map(D.esc).join("<br>")],
+      ["Versions", dg.versions ? `${dg.versions} pressings and editions` : ""],
+      ["Collectors", rel.have ? `${rel.have} own it · ${rel.want} want it` : ""],
+    ].filter(([, v]) => v);
+    dgSections = `${pics.length ? `<section class="sheet"><h2>Sleeves and labels</h2><div class="dgpics">${pics.map((x, k) => `<button type="button" data-big="${D.esc(x.uri)}" aria-label="Enlarge image ${k + 1}"><img src="${D.esc(x.uri150 || x.uri)}" alt="${D.esc(a.t)}, ${D.esc(x.type || "image")} ${k + 1}" loading="lazy" referrerpolicy="no-referrer"></button>`).join("")}</div>
+      <p class="small muted" style="margin:10px 0 0">Front, back, inner sleeves and labels of the first release, as photographed by Discogs users.</p>${credit}</section>` : ""}
+      ${facts.length ? `<section class="sheet"><h2>The first pressing</h2><dl class="facts">${facts.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl>${credit}</section>` : ""}`;
+    const cr = (rel.credits || []).concat((rel.companies || []).map((c) => ({ name: c.name, role: c.role })));
+    if (cr.length) dgCredits = `<section class="sheet"><h2>Full sleeve credits</h2><ul class="people">${cr.map((c) => `<li><b>${D.esc(c.name)}</b><span>${D.esc(c.role || "")}${c.tracks ? " · tracks " + D.esc(c.tracks) : ""}</span></li>`).join("")}</ul>${credit}</section>`;
+  }
+
   M.innerHTML = `
   <section class="ahero">
     <div class="acover">${D.cover(a, 320, 'loading="eager"')}</div>
@@ -93,7 +114,7 @@ D.shell("albums");
       <span class="tag">${a.c.map((c) => D.CAT[c]).join(", ")} · ${a.y}</span>
       <h1>${D.esc(a.t)}</h1>
       <p class="lede">${D.esc(n.about || a.note)}</p>
-      <div class="btns">${main ? `<a class="btn pri" href="https://open.spotify.com/album/${main.id}" target="_blank" rel="noopener">Open in Spotify</a>` : D.spotify(a)}<a class="btn" href="${discogs}" target="_blank" rel="noopener">Sleeves and pressings on Discogs</a></div>
+      <div class="btns">${main ? `<a class="btn pri" href="https://open.spotify.com/album/${main.id}" target="_blank" rel="noopener">Open in Spotify</a>` : D.spotify(a)}<a class="btn" href="${dg && !dg.stale && dg.master ? dg.master.url : discogs}" target="_blank" rel="noopener">${dg && !dg.stale ? "All pressings on Discogs" : "Sleeves and pressings on Discogs"}</a></div>
       ${main ? D.player("album", main.id, main.name) : ""}
     </div>
   </section>
@@ -104,7 +125,8 @@ D.shell("albums");
       <section class="sheet"><h2>The artwork</h2>${n.cover ? `<p>${D.esc(n.cover)}</p>` : ""}
         ${art.length > 1 ? `<div class="edgrid">${art.map((e) => `<figure><a href="/covers/${e.s}.webp" target="_blank" rel="noopener"><img src="/covers/${e.s}.webp" alt="${D.esc(a.t + ", " + e.t)} cover" width="120" height="120" loading="lazy"></a>${D.esc(e.t)}, ${e.y}</figure>`).join("")}</div>` : ""}
         ${a.ed.filter((e) => sp[e.s] && (!sp[a.s] || sp[e.s].id !== main.id)).map((e) => D.player("album", sp[e.s].id, sp[e.s].name)).join("")}
-        <p class="small muted" style="margin:12px 0 0">Back covers, inner sleeves and labels for every pressing are on <a href="${discogs}" target="_blank" rel="noopener">Discogs</a>.</p></section>
+        ${dg && !dg.stale ? "" : `<p class="small muted" style="margin:12px 0 0">Back covers, inner sleeves and labels for every pressing are on <a href="${discogs}" target="_blank" rel="noopener">Discogs</a>.</p>`}</section>
+      ${dgSections}
       ${n.influence && n.influence.length ? `<section class="sheet"><h2>Influence and afterlife</h2><ul class="infl">${n.influence.map((x) => `<li>${D.esc(x)}</li>`).join("")}</ul></section>` : ""}
       ${charts.length ? `<section class="sheet"><h2>Where it charted</h2><ul class="rows">${charts.map((c) => `<li><div class="r"><b>${D.esc(c.chart)}</b><span class="muted small">${c.year || ""}</span><span class="end big num">${D.esc(c.peak)}</span></div></li>`).join("")}</ul>
         ${(d.certs || []).length ? `<h3>Certifications</h3><p class="small">${d.certs.map((c) => `${D.esc(c.region)}: ${D.esc(c.award)}`).join(" · ")}</p>` : ""}</section>` : ""}
@@ -114,11 +136,20 @@ D.shell("albums");
         ${tracksHtml || `<p class="empty">Track list not available yet.</p>`}
         <p class="small muted" style="margin:12px 0 0">Lyrics open on Musixmatch, which licenses them; this site does not reproduce them. Live counts are from the setlists on record at setlist.fm.</p></section>
       ${people ? `<section class="sheet"><h2>Who played</h2>${people}</section>` : ""}
+      ${dgCredits}
     </div>
   </div>
 
   <nav class="anav">${prev ? `<a href="/album/?a=${prev.s}">← ${D.esc(prev.t)} <span class="muted">${prev.y}</span></a>` : "<span></span>"}${next ? `<a href="/album/?a=${next.s}">${D.esc(next.t)} <span class="muted">${next.y}</span> →</a>` : ""}</nav>
   <p class="small muted">Facts, musicians, charts and certifications from ${d.wiki ? `<a href="${d.wiki.url}" rel="noopener">Wikipedia</a> (CC BY-SA)` : ""}${d.wiki && d.mb ? " and " : ""}${d.mb ? `<a href="${d.mb.url}" rel="noopener">MusicBrainz</a>` : ""}${!d.wiki && !d.mb ? "the official catalogue" : ""}; notes written for this site.</p>`;
+  const big = document.createElement("dialog");
+  big.className = "photo"; big.setAttribute("aria-label", "Image"); document.body.append(big);
+  M.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-big]"); if (!b) return;
+    big.innerHTML = `<img src="${b.dataset.big}" alt="" referrerpolicy="no-referrer"><p>Image from Discogs</p>`;
+    big.showModal();
+  });
+  big.addEventListener("click", () => big.close());
 })();
 </script>
 </body>
