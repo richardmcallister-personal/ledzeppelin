@@ -91,7 +91,7 @@
         <p>The records, the songs and every show on record from 1968 to 2007, kept by a fan.</p></div>
       <div class="fcols">
         ${col("Listen", [["/albums/", "Albums"], ["/journeys/", "Listening journeys"], ["/songs/", "Songs"]])}
-        ${col("Live", [["/concerts/", "Shows by year"], ["/concert/?id=13d6bd65", "The O2, 2007"]])}
+        ${col("Live", [["/concerts/", "Shows by year"], ["/tour/", "Follow a tour"], ["/concert/?id=13d6bd65", "The O2, 2007"]])}
         ${col("Archive", [["/band/", "The band"], ["/influences/", "Influences"], ["/timeline/", "Timeline"], ["/gallery/", "Gallery"]])}
         ${col("Official", [["https://www.ledzeppelin.com/", "ledzeppelin.com"], ["https://www.setlist.fm/setlists/led-zeppelin-bd6bd12.html", "setlist.fm"]])}
       </div>

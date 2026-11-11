@@ -449,3 +449,31 @@ ul.people span{color:var(--muted);font-size:14px}
 .showbanner img{width:100%;max-height:340px;object-fit:cover;display:block}
 .albumart{margin:14px 0 0}
 .albumart img{width:100%;height:auto;border-radius:10px;display:block;margin-bottom:6px}
+/* Follow a tour */
+.tourgrid{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:16px;align-items:start}
+.tourmap{position:sticky;top:150px;border-radius:var(--radius);overflow:hidden;background:var(--paper)}
+#map{height:min(640px,calc(100vh - 180px));width:100%;background:var(--tint)}
+.tourside{display:grid;gap:16px}
+.tourside .sheet{margin:0}
+@media (max-width:900px){.tourgrid{grid-template-columns:1fr}.tourmap{position:static}#map{height:340px}}
+.tmark{display:grid;place-items:center}
+.tmark span{display:grid;place-items:center;min-width:26px;height:26px;padding:0 5px;border-radius:13px;background:var(--paper);color:var(--ink);border:2px solid var(--red-ink);font:700 12px/1 var(--body);box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.tmark.on{z-index:1000!important}
+.tmark.on span{background:var(--red);color:var(--on-red);border-color:var(--red);transform:scale(1.25)}
+.nightnav{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.nightnav .chip[disabled]{opacity:.4;cursor:default}
+.nightpics{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin:14px 0 4px}
+.nightpics figure{margin:0}
+.nightpics img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;display:block;margin-bottom:4px}
+.tset{margin:6px 0 10px;padding-left:24px;columns:2 180px;column-gap:24px}
+.tset li{padding:2px 0;break-inside:avoid}
+.tset li.enc::marker{color:var(--red-ink)}
+.nights{list-style:none;margin:0;padding:0;max-height:420px;overflow:auto}
+.nights button{appearance:none;border:0;background:none;width:100%;text-align:left;display:grid;grid-template-columns:32px 1fr;column-gap:8px;padding:8px 6px;border-radius:10px;cursor:pointer;color:var(--ink);font:inherit}
+.nights button:hover{background:var(--tint)}
+.nights button[aria-current="true"]{background:var(--us)}
+.nights .num{grid-row:span 2;align-self:center;font-family:var(--brand);color:var(--muted);font-size:18px;text-align:center}
+.nights small{color:var(--muted)}
+.ph-dot{color:var(--red-ink);font-weight:600}
+.leaflet-container{font:inherit}
+select.find{font:16px var(--body);padding:0 14px;border-radius:999px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);height:42px;width:100%}

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Follow a tour · Led Zeppelin</title>
+<meta name="description" content="Follow a Led Zeppelin tour night by night on a map, with each night's setlist and any surviving photo or poster.">
+<meta property="og:title" content="Follow a tour · Led Zeppelin">
+<meta property="og:description" content="Follow a Led Zeppelin tour night by night on a map, with each night's setlist and any surviving photo or poster.">
+<meta property="og:image" content="/assets/social-preview.png">
+<link rel="preload" href="/fonts/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="/d.css">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#202322">
+<script>try{var t=localStorage.getItem("lz_theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<script src="/d.js"></script>
+</head>
+<body>
+<main id="main" class="wrap">
+  <div class="head">
+    <span class="tag">Follow a tour</span>
+    <h1 id="tname" style="margin-top:8px">Loading…</h1>
+    <p id="tnote"></p>
+    <div class="tools" style="margin-top:12px"><label class="small muted" for="tpick">Tour</label><select id="tpick" class="find" style="max-width:320px"></select><span class="sp"></span><span class="small muted" id="tstats"></span></div>
+  </div>
+  <div class="tourgrid">
+    <div class="tourmap"><div id="map" role="application" aria-label="Map of the tour route"></div></div>
+    <div class="tourside">
+      <section class="sheet night" id="night" aria-live="polite"><div class="loading">Loading…</div></section>
+      <section class="sheet"><h2>Every night</h2><ol class="nights" id="nights"></ol></section>
+    </div>
+  </div>
+  <p class="small muted" style="margin-top:12px">Setlists from <a href="https://www.setlist.fm/" rel="noopener">setlist.fm</a>; places are plotted by city. Photos and posters are shown where one can be tied to the date. Map © <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a> contributors, © <a href="https://carto.com/attributions" rel="noopener">CARTO</a>.</p>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+D.shell("concerts");
+(async () => {
+  const tours = await D.get("/data/tours.json");
+  const pick = document.getElementById("tpick");
+  pick.innerHTML = tours.map((t) => `<option value="${t.s}">${D.esc(t.name)}</option>`).join("");
+  const tslug = tours.some((t) => t.s === D.qs("t")) ? D.qs("t") : tours[0].s;
+  pick.value = tslug;
+  pick.addEventListener("change", () => (location.search = "?t=" + pick.value));
+  const T = await D.get(`/data/tour/${tslug}.json`);
+  const N = T.nights;
+  const meta = tours.find((t) => t.s === tslug);
+  document.title = `${T.name} · Follow a tour · Led Zeppelin`;
+  document.getElementById("tname").textContent = T.name;
+  document.getElementById("tnote").textContent = T.note;
+  document.getElementById("tstats").textContent = `${D.date(meta.from)} – ${D.date(meta.to)} · ${meta.n} nights · ${meta.withPics} with a photo or poster`;
+
+  // Map: theme-aware tiles, route line, one marker per place (several nights in one city share a marker)
+  const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  const dark = () => document.documentElement.dataset.theme === "dark" || (!document.documentElement.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+  const map = L.map("map", { scrollWheelZoom: false, zoomSnap: 0.25 });
+  const tiles = L.tileLayer(`https://{s}.basemaps.cartocdn.com/${dark() ? "dark_all" : "light_all"}/{z}/{x}/{y}{r}.png`, { subdomains: "abcd", maxZoom: 12, attribution: "" }).addTo(map);
+  L.polyline(N.map((n) => n.ll), { color: css("--red"), weight: 2.5, opacity: 0.8, dashArray: "6 6" }).addTo(map);
+  map.fitBounds(L.latLngBounds(N.map((n) => n.ll)).pad(0.08));
+  const places = new Map();
+  N.forEach((n, i) => { const k = n.ll.join(); (places.get(k) || places.set(k, []).get(k)).push(i); });
+  const markers = [];
+  for (const idx of places.values()) {
+    const icon = L.divIcon({ className: "tmark", html: `<span>${idx.length > 1 ? idx.length + "×" : idx[0] + 1}</span>`, iconSize: [30, 30], iconAnchor: [15, 15] });
+    const m = L.marker(N[idx[0]].ll, { icon, keyboard: true, title: `${N[idx[0]].c}: ${idx.length} night${idx.length > 1 ? "s" : ""}` }).addTo(map);
+    m.on("click", () => { const after = idx.find((i) => i > cur); show(idx.includes(cur) && after !== undefined ? after : idx[0]); });
+    idx.forEach((i) => (markers[i] = m));
+  }
+
+  const list = document.getElementById("nights");
+  list.innerHTML = N.map((n, i) => `<li><button type="button" data-i="${i}"><span class="num">${i + 1}</span><b>${D.esc(n.c)}</b><small>${D.date(n.d)}${n.pics.length ? ' · <span class="ph-dot" title="Photo or poster">photo</span>' : ""}</small></button></li>`).join("");
+  list.addEventListener("click", (e) => { const b = e.target.closest("[data-i]"); if (b) show(+b.dataset.i, true); });
+
+  const P = document.getElementById("night");
+  let cur = -1;
+  function show(i, pan) {
+    cur = Math.max(0, Math.min(N.length - 1, i));
+    const n = N[cur];
+    markers.forEach((m) => m && m.getElement() && m.getElement().classList.remove("on"));
+    markers[cur].getElement() && markers[cur].getElement().classList.add("on");
+    if (pan || !map.getBounds().contains(n.ll)) map.panTo(n.ll);
+    list.querySelectorAll("button").forEach((b) => b.setAttribute("aria-current", +b.dataset.i === cur ? "true" : "false"));
+    const songs = n.sets.flatMap((st) => st.s.map((x) => ({ ...x, e: st.e })));
+    P.innerHTML = `<div class="nightnav"><button class="chip" type="button" data-go="-1" ${cur === 0 ? "disabled" : ""} aria-label="Previous night">← Previous</button><span class="small muted">Night ${cur + 1} of ${N.length}</span><button class="chip" type="button" data-go="1" ${cur === N.length - 1 ? "disabled" : ""} aria-label="Next night">Next →</button></div>
+      <div class="muted small" style="margin-top:12px">${D.date(n.d, true)}</div>
+      <h2 style="margin:2px 0 0;font-size:24px">${D.esc(n.v)}</h2>
+      <div class="muted">${D.esc([n.c, n.st || n.cc].filter(Boolean).join(", "))}</div>
+      ${n.pics.length ? `<div class="nightpics">${n.pics.map((p) => `<figure><a href="${p.src}.webp" target="_blank" rel="noopener"><img src="${p.src}-s.webp" alt="${D.esc(p.t)}" loading="lazy"></a><figcaption class="small muted">${D.esc(p.t)}${p.link ? ` · <a href="${p.link}" target="_blank" rel="noopener">archive</a>` : ""}</figcaption></figure>`).join("")}</div>` : ""}
+      ${songs.length ? `<h3>Setlist <span class="muted small" style="font-weight:400">${songs.length} songs</span></h3><ol class="tset">${songs.map((x) => `<li${x.e ? ' class="enc"' : ""}><a href="/song/?s=${D.slug(x.n)}">${D.esc(x.n)}</a>${x.i ? ` <small class="muted">${D.esc(x.i)}</small>` : ""}</li>`).join("")}</ol>` : `<p class="empty">No setlist survives for this night.</p>`}
+      <a class="more" href="/concert/?id=${n.id}">Full show page</a>`;
+    history.replaceState(null, "", `?t=${tslug}&n=${n.id}`);
+  }
+  P.addEventListener("click", (e) => { const b = e.target.closest("[data-go]"); if (b) show(cur + +b.dataset.go, true); });
+  document.addEventListener("keydown", (e) => {
+    if (e.target.closest("input,select,textarea")) return;
+    if (e.key === "ArrowRight") show(cur + 1, true);
+    if (e.key === "ArrowLeft") show(cur - 1, true);
+  });
+  const start = N.findIndex((n) => n.id === D.qs("n"));
+  show(start >= 0 ? start : 0, start >= 0);
+})();
+</script>
+</body>
+</html>
