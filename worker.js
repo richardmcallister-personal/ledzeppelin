@@ -71,6 +71,7 @@ function slim(s) {
     cn: (city.country || {}).name || "",
     t: (s.tour || {}).name || "",
     u: s.url || "",
+    ll: city.coords && city.coords.lat ? [+city.coords.lat.toFixed(3), +city.coords.long.toFixed(3)] : undefined,
     sets,
   };
 }
