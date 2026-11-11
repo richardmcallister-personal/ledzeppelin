@@ -477,3 +477,6 @@ ul.people span{color:var(--muted);font-size:14px}
 .ph-dot{color:var(--red-ink);font-weight:600}
 .leaflet-container{font:inherit}
 select.find{font:16px var(--body);padding:0 14px;border-radius:999px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);height:42px;width:100%}
+.osmtiles{filter:saturate(.35) contrast(.95)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .osmtiles{filter:invert(1) hue-rotate(180deg) brightness(.85) contrast(.9) saturate(.3)}}
+:root[data-theme="dark"] .osmtiles{filter:invert(1) hue-rotate(180deg) brightness(.85) contrast(.9) saturate(.3)}

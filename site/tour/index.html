@@ -33,7 +33,7 @@
       <section class="sheet"><h2>Every night</h2><ol class="nights" id="nights"></ol></section>
     </div>
   </div>
-  <p class="small muted" style="margin-top:12px">Setlists from <a href="https://www.setlist.fm/" rel="noopener">setlist.fm</a>; places are plotted by city. Photos and posters are shown where one can be tied to the date. Map © <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a> contributors, © <a href="https://carto.com/attributions" rel="noopener">CARTO</a>.</p>
+  <p class="small muted" style="margin-top:12px">Setlists from <a href="https://www.setlist.fm/" rel="noopener">setlist.fm</a>; places are plotted by city. Photos and posters are shown where one can be tied to the date. Map © <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a> contributors.</p>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
@@ -55,9 +55,8 @@ D.shell("concerts");
 
   // Map: theme-aware tiles, route line, one marker per place (several nights in one city share a marker)
   const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
-  const dark = () => document.documentElement.dataset.theme === "dark" || (!document.documentElement.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
   const map = L.map("map", { scrollWheelZoom: false, zoomSnap: 0.25 });
-  const tiles = L.tileLayer(`https://{s}.basemaps.cartocdn.com/${dark() ? "dark_all" : "light_all"}/{z}/{x}/{y}{r}.png`, { subdomains: "abcd", maxZoom: 12, attribution: "" }).addTo(map);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 12, attribution: "", className: "osmtiles" }).addTo(map);
   L.polyline(N.map((n) => n.ll), { color: css("--red"), weight: 2.5, opacity: 0.8, dashArray: "6 6" }).addTo(map);
   map.fitBounds(L.latLngBounds(N.map((n) => n.ll)).pad(0.08));
   const places = new Map();
